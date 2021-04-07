@@ -256,11 +256,11 @@ Once you have a `sessionInfo`, you can declare a session, and your code should w
 * you make more than the number of calls for which you have `responses` (but only if you have more than a single response listed.  See the note above.)
 
 # Limits
-This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver.  Rather, it helps when you can pass in a session as a parameter.
+1. This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver.  Rather, it helps when you can pass in a session as a parameter.
 
-That is a limitation, but arguably it is better style anyway to pass in a session as an argument. Doing so isolates entirely the session and database info from the queries being performed.
+  That is a limitation, but arguably it is better style anyway to pass in a session as an argument. Doing so isolates entirely the session and database info from the queries being performed.
 
-
+2. The optional `config` parameter for a `Session.run()` is not supported currently.
 
 [//]: # ( ns__custom_end APIIntro )
 

@@ -11,4 +11,5 @@ node_modules
 yalc.lock
 
 /* ns__custom_start extra */
+.idea
 /* ns__custom_end extra */

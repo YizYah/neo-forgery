@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/node": "^14.14.19",
+    "deep-equal": "^2.0.5",
     "path": "^0.12.7",
     "tslib": "^2.0.3"
   },

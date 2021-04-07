@@ -51,9 +51,9 @@ You can pass it in as a parameter to a function to test instead of a real sessio
 
 # Usage
 
-Include the package of course:
+Include the package in dev:
 ```
-npm i neo-forgery
+npm i -D neo-forgery
 ```
 Then create a mock session generator:
 ```
@@ -215,9 +215,9 @@ Next, you must specify `sessionInfo`.  (If you are using TypeScript, then you ca
 * params: an object with the parameters sent with the query (see [neo4j-driver](https://www.npmjs.com/package/neo4j-driver) for more information)
 * an array of anticipated responses.
 
-  **_Note_** `responses` for a given query and parameters is an array.  If there is only one element, then every time you run the query with the same parameters you will get back the same result.  But, if you have multiple elements, neo-forgery assumes that you want to get different responses each time it runs.  So if you have only 2 elements, and you run it 3 times, the third time will result in an error.  But if you have only one element in `responses`, you can run the query repeatedly without generating an error.
+  **_Note_** `responses` for a given query and parameters is an array.  If there is only one element, then every time you run the query with the same parameters you will get back the same result.  But, if you have multiple elements, `neo-forgery` assumes that you want to get different responses each time it runs.  So if you have only 2 elements, and you run it 3 times, the third time will result in an error.  But if you have only one element in `responses`, you can run the query repeatedly without generating an error.
 
-Here is an example of a systemInfo created from the above:
+Here is an example of a `sessionInfo` created from the above query and result data:
 ```
 import {SessionInfo} from 'neo-forgery'
 const sessionInfo: SessionInfo = {

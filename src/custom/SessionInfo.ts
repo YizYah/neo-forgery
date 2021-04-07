@@ -1,6 +1,10 @@
 
+export interface Parameters {
+  [key: string]: any
+}
+
 export interface ParamInfo {
-  params: {}
+  params: Parameters
   isMultiple?: boolean
   currentResponse?: number
   responses: any[]

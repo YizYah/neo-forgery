@@ -31,6 +31,10 @@
   ],
   "homepage": "https://github.com/YizYah/neo-forgery",
   "keywords": [
+    "neo4j",
+    "mock",
+    "neo4j-driver",
+    "test",
     "ts-packrat",
     "geenee"
   ],

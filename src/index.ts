@@ -8,6 +8,7 @@ import {getMockSession} from './custom/getMockSession'
 /* types */
 
 /* ns__custom_start export */
-// replace this with your own export
+export * from './custom/SessionInfo'
+
 module.exports = getMockSession
 /* ns__custom_end export */

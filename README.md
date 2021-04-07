@@ -50,15 +50,22 @@ A mock session generator (pronounced "neo-forgery").  You set up the session inf
 You can pass it in as a parameter to a function to test instead of a real session.
 
 # Usage
+
 Include the package of course:
 ```
 npm i neo-forgery
 ```
-Then you create a mock session generator:
+Then create a mock session generator:
 ```
 const getMockSession = require('../src/index')
 ```
 
+Mocking takes 3 steps:
+1. [specify the precise query and result info](#specifying-query-and-result-info) for neo4j
+2. [create your session info](#creating-session-info)
+3. [declare a session and call `run` as needed](#run-your-queries)
+
+## Specifying Query and Result Info
 You will have to define the session info by copying expected queries, params, and results from your neo4j browser.
 
 Following is an example.  Say that in neo4j you create data as follows:
@@ -202,8 +209,17 @@ const secondExpectedResult = [
 ]
 ```
 
+## Creating Session Info
+
+Next, you must specify `sessionInfo`.  (If you are using TypeScript, then you can import the `SessionInfo` type interface from the project.)  A `SessionInfo` is an object with the queries as keys.  Each query has as its value an array of objects.  The objects contain:
+* params: an object with the parameters sent with the query (see [neo4j-driver](https://www.npmjs.com/package/neo4j-driver) for more information)
+* an array of anticipated responses.
+
+  **_Note_** `responses` for a given query and parameters is an array.  If there is only one element, then every time you run the query with the same parameters you will get back the same result.  But, if you have multiple elements, neo-forgery assumes that you want to get different responses each time it runs.  So if you have only 2 elements, and you run it 3 times, the third time will result in an error.  But if you have only one element in `responses`, you can run the query repeatedly without generating an error.
+
 Here is an example of a systemInfo created from the above:
 ```
+import {SessionInfo} from 'neo-forgery'
 const sessionInfo: SessionInfo = {
   [query]: [
       {
@@ -216,8 +232,8 @@ const sessionInfo: SessionInfo = {
   ]
 }
 ```
-**_Note_** `responses` for a given query and parameters is an array.  If there is only one element, then every time you run the query with the same parameters you will get back the same result.  But, if you have multiple elements, neo-forgery assumes that you want to get different responses each time it runs.  So if you have only 2 elements, and you run it 3 times, the third time will result in an error.  But if you have only one element in `responses`, you can run the query repeatedly without generating an error.
 
+# Run your Queries
 Once you have a `sessionInfo`, you can declare a session, and your code should work:
 
 ```

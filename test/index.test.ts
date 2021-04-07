@@ -2,7 +2,7 @@
 /* ns__start_section imports */
 import test from 'ava';
 /* ns__custom_start customImports */
-import {SessionInfo} from '../src/custom/SessionInfo'
+import {SessionInfo} from '../src/index'
 const getMockSession = require('../src/index')
 import {expectedResult, nonExistentParams, nonExistentQuery, params, query, secondExpectedResult} from './custom/queryInfo'
 /* ns__custom_end customImports */

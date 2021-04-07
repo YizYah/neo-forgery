@@ -45,7 +45,7 @@ the easy way to mock a neo4j-driver session
 I couldn't find any other straightforward way to mock the neo4j driver during unit tests. It needs to be super fast and simple to work with CI and TDD.
 
 # What
-A mock session generator (pronounced "neo-forgery").  You set up the session info, which consists of query strings, param objects, and expected responses.
+A mock session generator for neo4j.  You set up the session info, which consists of query strings, param objects, and expected responses.
 
 You can pass it in as a parameter to a function to test instead of a real session.
 

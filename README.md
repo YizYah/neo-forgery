@@ -57,7 +57,7 @@ npm i -D neo-forgery
 ```
 Then create a mock session generator:
 ```
-const getMockSession = require('../src/index')
+const getMockSession = require('neo-forgery')
 ```
 
 Mocking takes 3 steps:

@@ -1,0 +1,53 @@
+{
+  "name": "{{general.packageName}}",
+  "description": "{{general.description}}",
+  "author": "{{general.author}}",
+  "bugs": "https://github.com/{{general.owner}}/{{general.repositoryName}}/issues",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "homepage": "https://github.com/{{general.owner}}/{{general.repositoryName}}",
+  "keywords": [
+    "ts-packrat",
+    "geenee"
+  ],
+  "license": "{{general.license}}",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": "{{general.owner}}/{{general.repositoryName}}",
+  "scripts": {
+    "build": "tsc",
+    "commit": "git-cz",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lintfix": "eslint \"src/**/*.ts\" --fix",
+    "test": "ava",
+    "posttest": "npm run view-coverage && npm run report && npm run lint",
+    "prepack": "rm -rf lib && tsc -b",
+    "report": "nyc report --reporter=json",
+    "semantic-release": "semantic-release",
+    "view-coverage": "nyc --extension .ts ava --forbid-only"
+  },
+  "types": "lib/index.d.ts",
+  "ava": {
+    "files": [
+      "test/**/*.test.ts"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+    "ts-node/register"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    },
+    "ghooks": {
+      "pre-commit": "npm run test"
+    }
+  }
+}

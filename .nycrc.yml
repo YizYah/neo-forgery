@@ -1,0 +1,8 @@
+# ns__file unit: standard, comp: .nycrc.yml */
+# ns__custom_start testCoverageThresholds */
+check-coverage: true
+branches: 50
+lines: 60
+functions: 40
+statements: 60
+# ns__custom_end testCoverageThresholds */

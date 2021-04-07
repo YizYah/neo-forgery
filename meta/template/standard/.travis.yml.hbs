@@ -1,0 +1,29 @@
+language: node_js
+
+scripts:
+  - npm install codecov -g
+
+after_success:
+  - codecov -f coverage/*.json
+
+branches:
+  only:
+    - main
+
+jobs:
+  include:
+    - stage: test
+      node_js:
+        - lts/*
+      script:
+        - "npm run lint"
+        - "npm run test"
+    - stage: release
+      node_js: lts/*
+      deploy:
+        provider: script
+        skip_cleanup: true
+        on:
+          all_branches: true
+        script:
+          - npx semantic-release

@@ -1,0 +1,14 @@
+/* ns__file unit: standard, comp: .gitignore */
+*-debug.log
+*-error.log
+/.nyc_output
+/dist
+/lib
+/tmp
+/yarn.lock
+node_modules
+.yalc
+yalc.lock
+
+/* ns__custom_start extra */
+/* ns__custom_end extra */

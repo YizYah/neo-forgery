@@ -1,0 +1,17 @@
+userClass: user
+codeName: MyApp
+template:
+  dir: /home/yisroel/packages/packrat-ts-all/packrat
+  name: null
+  version: 1
+starter: /home/yisroel/packages/neo-forgery-all/neo-forgery.starter
+general:
+  description: the easy way to mock a neo4j-driver session
+  packageName: neo-forgery
+  author: YizYah
+  owner: YizYah
+  repositoryName: neo-forgery
+  license: MIT
+  multi: false
+  fullName: Yisroel Yakovson
+  publicationYear: '2021'

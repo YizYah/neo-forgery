@@ -1,0 +1,13 @@
+{{start imports}}
+import test from 'ava';
+{{custom customImports}}
+
+const {{names.singularLowercase}} = require('../../src/groupings/{{names.singularLowercase}}')
+{{end imports}}
+
+{{customStart tests}}
+test('{{names.singularLowercase}}', t => {
+// update this as you update {{names.singularLowercase}}
+t.not(typeof {{names.singularLowercase}}, "undefined")
+});
+{{customEnd tests}}

@@ -1,0 +1,12 @@
+{{custom helpers}}
+
+{{#each specs.types}}
+// {{description}}
+export {{category}} {{capitalizeFirst name}} {{#if (or (eq category 'interface') (eq category 'enum'))}}{{curly true}}{{else}}={{/if}}
+/* ns__custom_start {{name}} */
+/* ns__custom_end {{name}} */
+{{#if (or (eq category 'interface') (eq category 'enum'))}}{{curly}}{{/if}}
+
+{{/each}}
+
+{{custom extraExports}}

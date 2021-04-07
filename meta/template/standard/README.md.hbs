@@ -1,0 +1,75 @@
+{{custom beginning}}
+{{start intro}}
+{{customStart description}}
+{{general.packageName}}
+======
+{{general.description}}
+{{customEnd description}}
+{{custom afterDescription}}
+{{customStart badges}}
+{{start usageSection}}
+
+[![codecov](https://codecov.io/gh/{{general.owner}}/{{general.packageName}}/branch/main/graph/badge.svg?token=019QO4XK1Z)](https://codecov.io/gh/{{general.owner}}/{{general.packageName}})
+[![Version](https://img.shields.io/npm/v/{{general.packageName}}.svg)](https://npmjs.org/package/{{general.packageName}})
+[![Downloads/week](https://img.shields.io/npm/dw/{{general.packageName}}.svg)](https://npmjs.org/package/{{general.packageName}})
+[![License](https://img.shields.io/npm/l/{{general.packageName}}.svg)](https://github.com/{{general.owner}}/{{general.repositoryName}}/blob/master/package.json)
+
+[![Geenee](https://img.shields.io/badge/maintained%20by-geenee-brightgreen)](https://npmjs.org/package/geenee)
+[![Template](https://img.shields.io/badge/template-ts--packrat-blue)](https://npmjs.org/package/ts-packrat)
+{{customEnd badges}}
+{{end intro}}
+
+
+[//]: # ( ns__start_section api )
+
+{{customStart APIIntro}}
+# API
+{{customEnd APIIntro}}
+
+{{customStart constantsIntro}}
+## General Constants and Commands
+{{customEnd constantsIntro}}
+
+{{#each nsInfo.static.grouping}}
+
+[//]: # ( ns__start_section constants-{{slug}} )
+
+### {{capitalizeFirst slug}}
+{{specs.description}}
+  {{#each specs.constants}}
+* {{name}}: {{description}}
+  {{/each}}
+
+[//]: # ( ns__end_section constants-{{slug}} )
+
+
+{{/each}}
+
+{{start types}}
+{{#if nsInfo.static.typeCategory}}
+{{customStart typeIntro}}
+## Types
+The following types and interfaces are exposed by {{general.repositoryName}}.
+{{customEnd typeIntro}}
+
+{{#each nsInfo.static.typeCategory}}
+
+[//]: # ( ns__start_section types-{{slug}} )
+
+### {{capitalizeFirst slug}}
+{{specs.description}}
+{{#each specs.types}}
+* {{name}}: {{description}}
+{{/each}}
+
+[//]: # ( ns__end_section types-{{slug}} )
+
+{{/each}}
+
+{{/if}}
+
+{{end types}}
+
+
+[//]: # ( ns__end_section api )
+

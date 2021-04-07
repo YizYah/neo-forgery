@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "fullname": "^4.0.1",
+    "git-user-name": "^2.0.0"
+  }
+}

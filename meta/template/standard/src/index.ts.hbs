@@ -1,0 +1,23 @@
+{{custom beginning}}
+
+/* types */
+{{#each nsInfo.static.typeCategory}}
+export * from './types/{{slug}}'
+{{/each}}
+
+{{#if nsInfo.general.multi}}
+    {{customStart export}}
+    // replace this with your own export
+    module.exports = "hello world"
+    {{customEnd export}}
+/* constants */
+{{#each nsInfo.static.grouping}}
+
+  export const {{slug}} = require('./groupings/{{slug}}')
+{{/each}}
+{{else}}
+{{customStart export}}
+// replace this with your own export
+module.exports = "hello world"
+{{customEnd export}}
+{{/if}}

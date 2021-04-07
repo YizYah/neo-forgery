@@ -1,0 +1,13 @@
+{{custom helpers}}
+
+{{start exports}}
+module.exports = {
+{{#each specs.constants}}
+  {{name}}: // {{description}}
+    /* ns__custom_start {{name}} */
+    null,
+    /* ns__custom_end {{name}} */
+
+{{/each}}
+}
+{{end exports}}

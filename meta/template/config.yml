@@ -1,0 +1,163 @@
+name: null
+version: 1
+category: ts package
+dirs:
+  custom: src/custom
+
+format:
+  customFileFilter: '+(*.{js,jsx,ts,tsx,md,yml}|.gitignore)'
+  defaultOpenComment: /*
+  defaultCloseComment: '*/'
+  openComment:
+    .md: |-
+
+      [//]: # (
+    .yml: '#'
+    .gitignore: '#'
+  closeComment:
+    .md: )
+    .yml: |+
+    .gitignore: |+
+
+general:
+  description:
+    type: string
+    required: false
+    description: one liner about what the package is or does
+  packageName:
+    type: string
+    required: true
+    description: name of package
+    default: __session.defaultProjectName__
+  author:
+    type: string
+    required: true
+    description: author of the package
+    default: __session.userName__
+  owner:
+    type: string
+    required: true
+    description: owner of the GitHub repo
+    default: __answers.author__
+  repositoryName:
+    type: string
+    required: true
+    description: repository on GitHub
+    default: __answers.packageName__
+  license:
+    type: string
+    required: false
+    default: MIT
+    options:
+      - MIT
+    description: license
+  multi:
+    type: boolean
+    required: false
+    description: true if multiple constants are named.  false means that __answers.packageName__ exports a single constant directly
+    default: true
+  fullName:
+    type: string
+    required: true
+    description: full name of owner (to create the copyright in the default license)
+    default: __session.fullName__
+  publicationYear:
+    type: string
+    required: true
+    description: year for copyright
+    default: __session.year__
+
+static:
+  typeCategory:
+    description: a category of types
+    files:
+      typesFile.ts:
+        name: __slug__
+        suffix: '.ts'
+        directory: src/types
+        forEach: typeCategory
+    specs:
+      description:
+        type: string
+        required: false
+      types:
+        type: list
+        description: a list of types exported from your package
+        contents:
+          name:
+            type: string
+            required: true
+          description:
+            type: string
+            required: true
+          category:
+            type: string
+            required: false
+            default: interface
+            choices:
+              - const
+              - enum
+              - interface
+              - type
+  grouping:
+    description: an object of functions or constants in the api
+    files:
+      groupingFile.ts:
+        name: __slug__
+        suffix: '.ts'
+        directory: src/groupings
+      groupingTest.ts:
+        name: __slug__
+        suffix: '.test.ts'
+        directory: test/groupings/
+    specs:
+      description:
+        type: string
+        required: true
+      constants:
+        type: list
+        required: false
+        contents:
+          name:
+            type: string
+            required: true
+            description: name of the constant
+          type:
+            type: string
+            required: false
+            description: classification in the README or documentation
+          description:
+            type: string
+            required: false
+            description: shown in README
+
+setupSequence:
+  preCommands:
+    - title: run git
+      file: git
+      arguments:
+        - init
+        - $codeDir
+  mainInstallation:
+    - '@types/node@14.14.19'
+    - tslib@2.0.3
+    - path
+  devInstallation:
+    - '@typescript-eslint/eslint-plugin'
+    - '@typescript-eslint/parser'
+    - typescript@4.1.3
+    - eslint
+    - prettier@2.2.1
+    - ava
+    - nyc
+    - ts-node
+    - commitizen
+    - cz-conventional-changelog
+    - semantic-release
+    - ghooks
+
+ignore:
+  - test/custom
+  - images
+  - docs
+  - LICENSE

@@ -1,0 +1,7 @@
+userClass: user
+codeName: MyApp
+
+template:
+  dir: /home/yisroel/packages/packrat-ts-all/packrat
+  name: 
+  version: 1

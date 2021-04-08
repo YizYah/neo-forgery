@@ -63,7 +63,11 @@ test('general', t => {
   t.regex(error.message, /empty response list given for query/);
 
 
-  // let result = session.run(query, params)
+  let result = session.run(query, params).then(
+    (result: any) => {
+      t.deepEqual(result, expectedResult)
+    }
+  )
   // t.deepEqual(result, expectedResult)
   // result = session.run(query, params)
   // t.deepEqual(result, secondExpectedResult)

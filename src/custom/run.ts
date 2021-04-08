@@ -1,6 +1,6 @@
 import {SessionInfo, ParamInfo} from './SessionInfo'
 const deepEqual = require('deep-equal')
-export function run(sessionInfo: SessionInfo, query: string, params: any){
+export async function run(sessionInfo: SessionInfo, query: string, params: any){
   const queryInfo = sessionInfo[query]
   if (!queryInfo) throw new Error(`query was called that is not in the sample session: '${query}'`)
   let returned: any = null

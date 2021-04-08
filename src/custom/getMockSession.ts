@@ -30,8 +30,7 @@ export function getMockSession(sessionInfo: SessionInfo) {
 
   return {
     sessionInfo: finalSessionInfo,
-    run: function (query: string, params: any) {
-      /* istanbul ignore next */
+    run: async function (query: string, params: any) {
       return run(this.sessionInfo, query, params)
     },
   }

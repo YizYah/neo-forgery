@@ -68,8 +68,5 @@ test('general', t => {
       t.deepEqual(result, expectedResult)
     }
   )
-  // t.deepEqual(result, expectedResult)
-  // result = session.run(query, params)
-  // t.deepEqual(result, secondExpectedResult)
 });
 /* ns__custom_end general */

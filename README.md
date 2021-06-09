@@ -67,21 +67,21 @@ To mock a query, simply:
        ...
     }
 ```
-Or you can run the query in the neo4j data browser, then on the left click the `Code` button and copy the `Results`:.
+Or you can run the query in the neo4j data browser, then on the left click the `Code` button and copy the `Response`:.
 
 ![](images/gettingResponse.png)
 
-__*NOTE*__ If you copy from the data browser, you'll only get the `records` portion of the output.  You'll have to build the full object around that in your code:
+__*NOTE*__ If you copy from the data browser, you'll only get the `records` portion of the output.  You'll have to paste it in as a value for `records`  in an object:
 ```
 {
-    records: /* copied records */
+    records: <Response>
 }
 ```
 
 2. copy and store the output as a const, e.g.:
 ```
 const sampleOutput = {
-  'records': [{ ...
+  'records': [{ ... } ... ]
 ```
 3. create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 

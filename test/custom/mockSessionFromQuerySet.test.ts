@@ -3,7 +3,7 @@ import test from 'ava'
 const mockSessionFromQuerySet = require("../../src/custom/session/mockSessionFromQuerySet")
 import {sampleRecordList} from "./data/sampleRecordList";
 import {mockResultsFromData} from "../../../../export-server-all/export-server/test/custom/neoforgery/results/mockResultsFromData";
-import {QuerySpec} from "../../src/custom/session/QuerySpec";
+import {QuerySpec} from "../../src/custom/types/QuerySpec";
 import {erringSession} from "../../../../export-server-all/export-server/test/custom/data/sampleErringSession";
 import {mockResultsFromCapturedOutput} from "../../src/custom/results/mockResultsFromCapturedOutput";
 

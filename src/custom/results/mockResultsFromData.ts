@@ -1,4 +1,4 @@
-import {ReturnedDataRecord} from "../records/ReturnedDataRecord";
+import {ReturnedDataRecord} from "../types/ReturnedDataRecord";
 import {instanciateRecordList} from "../records/instanciateRecordList";
 
 export function mockResultsFromData(sampleResults: ReturnedDataRecord[]) {

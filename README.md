@@ -45,9 +45,11 @@ the easy way to mock a neo4j-driver session.
 I couldn't find any other straightforward way to mock the neo4j driver during unit tests. It needs to be super fast and simple to work with CI and TDD.
 
 # What
-A mock session generator for neo4j.  You set up the session info, which consists of query strings, param objects, and expected responses.
+A mock session generator for neo4j.  You set up a mock neo4j session by specifying an array of query spec objects.  Each query spec object contains a query string, param set, and expected response.
 
-You can pass it in as a parameter to a function to test instead of a real session.
+You can then pass in your session as a parameter to a function to test instead of a real session.
+
+And there's a function to test a query set against the live database, not intended for unit tests.  That way, whenever you change your database you can confirm that the queries in your mock session are all still working!
 
 # Usage
 
@@ -56,6 +58,7 @@ Include the package in dev:
 npm i -D neo-forgery
 ```
 
+## Mocking a Query
 To mock a query, simply:
 1. capture the result from the query. For instance, if you call the query in your code already with a `console.log` statement:
 ```
@@ -64,211 +67,119 @@ To mock a query, simply:
        ...
     }
 ```
-Or you can run the query in the neo4j data browser, then on the left click the "code" button and copy the `Results`.
+Or you can run the query in the neo4j data browser, then on the left click the `Code` button and copy the `Results`:.
+
+![](images/gettingResponse.png)
+
+__*NOTE*__ If you copy from the data browser, you'll only get the `records` portion of the output.  You'll have to build the full object around that in your code:
+```
+{
+    records: /* copied records */
+}
+```
+
 2. copy and store the output as a const, e.g.:
 ```
 const sampleOutput = {
   'records': [{ ...
 ```
-3. call `mockResultsFromCapturedOutput` to create an output, and generate a mockSession that returns it using `mockSession`.
-```
-   const mockSession = require('../custom/neoforgery/session/mockSession')
-   const sessionRunMock = async (query: string, params: any) => {
-     return mockResultsFromCapturedOutput(sampleOutput);
-   };
-```
-Then you can pass that mock session into code that requires a session.
+3. create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 
-
-## Specifying Query and Result Info
-You will have to define the session info by copying expected queries, params, and results from your neo4j browser.
-
-Following is an example.  Say that in neo4j you create data as follows:
 ```
-merge (a:Movie {name: "Star Wars: Episode VII"})-[:RELEASED_IN]->(y:Year {value: 2015})<-[:RELEASED_IN]-(b:Movie {name: "Jurassic World"})
-merge (c:Movie {name: "The Lion King"})-[:RELEASED_IN]->(z:Year {value: 2019})
-return a,b,c,y,z
-```
+import {QuerySpec} from 'neo-forgery'
 
-You can then mock calling the query `match (movie:Movie) return movie` two times.  You will have to get your expected results from the queries to insert into your test.  One way is to run the query in your neo4j data browser and grab the results:
-![](src/custom/images/gettingResponse.png)
-
-Let's assume that between the first and second time you expect `Jurassic World` to be removed, e.g.
-```
-match (movie:Movie {name: "Jurassic World"}) detach delete movie
-```
-
-Here is sample test code declaring the info about the query to test and expected results:
-```
-const query='match (movie:Movie) return movie'
-const params={}
-const expectedResult = [
-  {
-    "keys": [
-      "movie"
-    ],
-    "length": 1,
-    "_fields": [
-      {
-        "identity": {
-          "low": 9,
-          "high": 0
-        },
-        "labels": [
-          "Movie"
-        ],
-        "properties": {
-          "name": "Star Wars: Episode VII"
-        }
-      }
-    ],
-    "_fieldLookup": {
-      "movie": 0
+const querySet:QuerySpec[] = [
+    {
+        name: 'movies',
+        query: 'MATCH (movie:Movie)' +
+            ' WHERE toLower(movie.title) CONTAINS $query' +
+            ' RETURN movie',
+        output: expectedResultForMovieQuery,
+        params: {query:"matrix"}
+    },
+    {
+        name: 'title',
+        query: 'MATCH (movie:Movie {title:$title}) ' +
+            'OPTIONAL MATCH (movie)<-[rel]-(person:Person) ' +
+            'RETURN movie.title as title, ' +
+            'collect({name:person.name, role:rel.roles, job:head(split(toLower(type(rel)),\'_\'))}) as cast ' +
+            'LIMIT 1',
+        params: {title: 'Apollo 13'},
+        output: expectedResultsForTitleQuery,
     }
-  },
-  {
-    "keys": [
-      "movie"
-    ],
-    "length": 1,
-    "_fields": [
-      {
-        "identity": {
-          "low": 11,
-          "high": 0
-        },
-        "labels": [
-          "Movie"
-        ],
-        "properties": {
-          "name": "Jurassic World"
-        }
-      }
-    ],
-    "_fieldLookup": {
-      "movie": 0
-    }
-  },
-  {
-    "keys": [
-      "movie"
-    ],
-    "length": 1,
-    "_fields": [
-      {
-        "identity": {
-          "low": 12,
-          "high": 0
-        },
-        "labels": [
-          "Movie"
-        ],
-        "properties": {
-          "name": "The Lion King"
-        }
-      }
-    ],
-    "_fieldLookup": {
-      "movie": 0
-    }
-  }
-]
-
-const secondExpectedResult = [
-  {
-    "keys": [
-      "movie"
-    ],
-    "length": 1,
-    "_fields": [
-      {
-        "identity": {
-          "low": 9,
-          "high": 0
-        },
-        "labels": [
-          "Movie"
-        ],
-        "properties": {
-          "name": "Star Wars: Episode VII"
-        }
-      }
-    ],
-    "_fieldLookup": {
-      "movie": 0
-    }
-  },
-  {
-    "keys": [
-      "movie"
-    ],
-    "length": 1,
-    "_fields": [
-      {
-        "identity": {
-          "low": 12,
-          "high": 0
-        },
-        "labels": [
-          "Movie"
-        ],
-        "properties": {
-          "name": "The Lion King"
-        }
-      }
-    ],
-    "_fieldLookup": {
-      "movie": 0
-    }
-  }
 ]
 ```
 
-## Creating Session Info
-
-Next, you must specify `sessionInfo`.  (If you are using TypeScript, then you can import the `SessionInfo` type interface from the project.)  A `SessionInfo` is an object with the queries as keys.  Each query has as its value an array of objects.  The objects contain:
-* params: an object with the parameters sent with the query (see [neo4j-driver](https://www.npmjs.com/package/neo4j-driver) for more information)
-* an array of anticipated responses.
-
-  **_Note_** `responses` for a given query and parameters is an array.  If there is only one element, then every time you run the query with the same parameters you will get back the same result.  But, if you have multiple elements, `neo-forgery` assumes that you want to get different responses each time it runs.  So if you have only 2 elements, and you run it 3 times, the third time will result in an error.  But if you have only one element in `responses`, you can run the query repeatedly without generating an error.
-
-Here is an example of a `sessionInfo` created from the above query and result data:
+3. generate a mockSession that returns it using `mockSession`.  You can then call `mockResultsFromCapturedOutput` to generate a true neo4j array of the Record type to compare the expected output to what your mock session returns.
 ```
-import {SessionInfo} from 'neo-forgery'
-const sessionInfo: SessionInfo = {
-  [query]: [
-      {
-        params,
-        responses: [
-          expectedResult,
-          secondExpectedResult
-        ]
-      }
-  ]
+    const session = mockSessionFromQuerySet(querySet)
+    const output = await session.run(query, params)
+    t.deepEqual(output,mockResultsFromCapturedOutput(expectedOutput))
+```
+
+You can pass your mock session into code that requires a session.
+
+## Checking the Validity of Your Mocked Queries
+The `neo-forgery` package is build based on the premise that unit tests must be fast.  By removing the need to query an actual database, you get instant results.  But what if your database changes and the queries no longer work?
+
+To solve that problem, `neo-forgery` exports a function:
+```
+async function testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
+```
+You can pass in your set of queries along with the information needed for a database, and you can check whether the queries work for the given database.  If any of them fail to return what you specify as output, and error is returned.
+
+For example:
+```
+import { DatabaseInfo, testQuerySet } from 'neo-forgery'
+const moviesDatabaseInfo: DatabaseInfo = {
+  URI: 'neo4j+s://demo.neo4jlabs.com',
+  USER: 'movies',
+  PASSWORD: 'movies',
+  DATABASE: 'movies',
+};
+
+const queriesWorking = await testQuerySet(querySet, moviesDatabaseInfo)
+t.is(queriesWorking, "success")  
+```
+
+This function is *not intended for unit tests*! The whole point of `neo-forgery` is to remove the need to query an actual database when you run your unit tests.  Rather, consider creating a separate test that you call regularly, perhaps as part of a regression test or after you change your database.
+
+__*NOTE*__ Currently, `testQuerySet()` currently checks only `records` in query results, and only makes an exact match.  For instance, it will throw an error even the your `output` for a query is a subset of the data returned.  That is a problem if you want to create small sample outputs for testing purposes.  A future version of `neo-forgery` may remove that limitation by allowing you to specify a type of comparison for a query.
+
+## Exported Data Types
+There are some interfaces that you can import into your TypeScript project.
+
+### Database Specification
+You must use a DatabaseInfo type for specifying the database that you want to use for running [testQuerySet](#checking-the-validity-of-your-mocked-queries).
+```
+interface DatabaseInfo {
+  URI: string;
+  USER: string;
+  PASSWORD: string;
+  DATABASE?: string;
 }
 ```
 
-# Run your Queries
-Once you have a `sessionInfo`, you can declare a session, and your code should work:
-
+### Query Response Specification 
+The output from a query is specified via a `MockOutput` instance:
 ```
-  const session = getMockSession(sessionInfo)
-  let result = session.run(query, params)
-    // result will be deeply equal to expectedResult
-  let result = session.run(query, params)
-    // result will be deeply equal to secondExpectedResult
-});
-
+interface MockOutput {
+    records: SampleOutputRecord[];
+    summary?: any;
+}
 ```
+Normally, you won't need to worry about the details for that.  You can just capture the output in the ways specified [above](#mocking-a-query).
 
-# Errors
-`neo-forgery` assumes that the test should fail if anything unexpected occurs. You should receive an error if, for instance:
-
-* you call a query that does not exist in your session info
-* you call a query with params that do not exist for that query in your session info
-* you are missing `responses`
-* your `responses` array is empty
-* you make more than the number of calls for which you have `responses` (but only if you have more than a single response listed.  See the note above.)
+### Query Specifications
+A query set is an instance of `QuerySpec[]`:
+```
+export interface QuerySpec {
+    name?: string;
+    query: string;
+    output: MockOutput;
+    params?: ParamSet;
+}
+```
 
 # Limits
 1. This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver.  Rather, it helps when you can pass in a session as a parameter.

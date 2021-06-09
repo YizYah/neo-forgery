@@ -8,7 +8,7 @@ const mockDatabaseInfo = {
     PASSWORD: 'thisIsAfakeDatabase',
 };
 
-export function mockSession(sessionRunMock: Function): Session {
+export function mockSessionFromFunction(sessionRunMock: Function): Session {
     const driver = neo4j.driver(
         mockDatabaseInfo.URI,
         neo4j.auth.basic(
@@ -21,4 +21,4 @@ export function mockSession(sessionRunMock: Function): Session {
     return fakeSession
 }
 
-module.exports = mockSession;
+module.exports = mockSessionFromFunction;

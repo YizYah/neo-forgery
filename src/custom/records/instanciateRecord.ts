@@ -1,4 +1,4 @@
-import {ReturnedDataRecord} from "./ReturnedDataRecord";
+import {ReturnedDataRecord} from "../types/ReturnedDataRecord";
 const Record = require('neo4j-driver').types.Record ;
 
 export function instanciateRecord(returnedDataRecord: ReturnedDataRecord): Record<any, any> {

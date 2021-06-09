@@ -1,4 +1,4 @@
-import {QuerySpec} from "./QuerySpec";
+import {QuerySpec} from "../types/QuerySpec";
 import Session from 'neo4j-driver/types/session';
 import {mockResultsFromCapturedOutput} from '../results/mockResultsFromCapturedOutput';
 

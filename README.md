@@ -41,17 +41,27 @@ the easy way to mock a neo4j-driver session.
 
 [//]: # ( ns__custom_start APIIntro )
 
-# Why
+[//]: # ( ns__custom_start toc )
+<!-- toc -->
+* [:clipboard: Why](#clipboard-why)
+* [:white_check_mark: What](#white_check_mark-what)
+* [:wrench: Usage](#wrench-usage)
+* [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
+<!-- tocstop -->
+
+[//]: # ( ns__custom_end toc )
+
+# <a name="clipboard-why"></a>:clipboard: Why
 I couldn't find any other straightforward way to mock the neo4j driver during unit tests. It needs to be super fast and simple to work with CI and TDD.
 
-# What
+# <a name="white_check_mark-what"></a>:white_check_mark: What
 A mock session generator for neo4j.  You set up a mock neo4j session by specifying an array of query spec objects.  Each query spec object contains a query string, param set, and expected response.
 
 You can then pass in your session as a parameter to a function to test instead of a real session.
 
 And there's a function to test a query set against the live database, not intended for unit tests.  That way, whenever you change your database you can confirm that the queries in your mock session are all still working!
 
-# Usage
+# <a name="wrench-usage"></a>:wrench: Usage
 
 Include the package in dev:
 ```
@@ -69,7 +79,7 @@ To mock a query, simply:
 ```
 Or you can run the query in the neo4j data browser, then on the left click the `Code` button and copy the `Response`:.
 
-![](images/gettingResponse.png)
+![response](images/gettingResponse.jpg)
 
 __*NOTE*__ If you copy from the data browser, you'll only get the `records` portion of the output.  You'll have to paste it in as a value for `records`  in an object:
 ```
@@ -181,7 +191,7 @@ export interface QuerySpec {
 }
 ```
 
-# Limits
+# <a name="heavy_exclamation_mark-limits"></a>:heavy_exclamation_mark: Limits
 1. This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver.  Rather, it helps when you can pass in a session as a parameter.
 
   That is a limitation, but arguably it is better style anyway to pass in a session as an argument. Doing so isolates entirely the session and database info from the queries being performed.

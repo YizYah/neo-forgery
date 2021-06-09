@@ -11,7 +11,7 @@
 
 ![](images/neo-forgery.gif)
 
-the easy way to mock a neo4j-driver session
+the easy way to mock a neo4j-driver session.
 
 [//]: # ( ns__custom_end description )
 
@@ -55,15 +55,30 @@ Include the package in dev:
 ```
 npm i -D neo-forgery
 ```
-Then create a mock session generator:
-```
-const getMockSession = require('neo-forgery')
-```
 
-Mocking takes 3 steps:
-1. [specify the precise query and result info](#specifying-query-and-result-info) for neo4j
-2. [create your session info](#creating-session-info)
-3. [declare a session and call `run` as needed](#run-your-queries)
+To mock a query, simply:
+1. capture the result from the query. For instance, if you call the query in your code already with a `console.log` statement:
+```
+    (result: any) => {
+       console.log(`result=${JSON.stringify(result)}`)
+       ...
+    }
+```
+Or you can run the query in the neo4j data browser, then on the left click the "code" button and copy the `Results`.
+2. copy and store the output as a const, e.g.:
+```
+const sampleOutput = {
+  'records': [{ ...
+```
+3. call `mockResultsFromCapturedOutput` to create an output, and generate a mockSession that returns it using `mockSession`.
+```
+   const mockSession = require('../custom/neoforgery/session/mockSession')
+   const sessionRunMock = async (query: string, params: any) => {
+     return mockResultsFromCapturedOutput(sampleOutput);
+   };
+```
+Then you can pass that mock session into code that requires a session.
+
 
 ## Specifying Query and Result Info
 You will have to define the session info by copying expected queries, params, and results from your neo4j browser.

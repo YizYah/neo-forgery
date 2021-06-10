@@ -44,8 +44,6 @@ const sessionInfo: SessionInfo = {
 
 const finalSessionInfo = addMultipleToSessionInfo(sessionInfo)
 
-// console.log(`finalSessionInfo=${JSON.stringify(finalSessionInfo,null, 2)}`)
-
 test.skip('run', async t => {
 
   let result = await run(finalSessionInfo, query, params)

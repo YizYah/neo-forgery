@@ -79,7 +79,6 @@ test('mockSessionFromQuerySet returns correct output', async t => {
 test('mockSessionFromQuerySet takes no params', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(noParamsQuery)
-    console.log(`output=${JSON.stringify(output)}`)
     t.deepEqual(output,mockResultsFromCapturedOutput(expectedOutput2))
 })
 

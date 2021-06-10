@@ -1,4 +1,4 @@
-import { DatabaseInfo } from '../../../src/custom/types/DatabaseInfo';
+import { DatabaseInfo } from '../types/DatabaseInfo';
 
 const neo4j = require('neo4j-driver');
 

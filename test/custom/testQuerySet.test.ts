@@ -10,13 +10,13 @@ const proxyquire = require('proxyquire')
 const getSessionStub: any = {}
 
 const testQuerySetModule = proxyquire('../../src/custom/session/testQuerySet', {
-    '../../../test/custom/database/getSession': getSessionStub
+    '../database/getSession': getSessionStub
 })
 
 
 const mockSessionFromQuerySet = require('../../src/custom/session/mockSessionFromQuerySet')
 // const {testQuerySet} = require("../../src/custom/session/testQuerySet")
-const moviesDatabaseInfo: DatabaseInfo = require('./database/moviesDatabaseInfo')
+const moviesDatabaseInfo: DatabaseInfo = require('./data/moviesDatabaseInfo')
 
 const querySet: QuerySpec[] = [
     {
@@ -98,7 +98,6 @@ test('testQuerySet Positive Result', async t => {
     getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
         return mockSessionFromQuerySet(querySet)
     }
-    console.log(`getSessionStub =${JSON.stringify(getSessionStub)}`)
     const queriesWorking = await testQuerySetModule.testQuerySet(querySet, moviesDatabaseInfo)
     t.is(queriesWorking, "success")
     getSessionStub.getSession = undefined
@@ -106,7 +105,6 @@ test('testQuerySet Positive Result', async t => {
 
 test('testQuerySet Negative Result', async t => {
     getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
-        console.log('!!!in mock!!! failingQuerySet')
         return mockSessionFromQuerySet(querySet)
     }
     const error = await t.throwsAsync(async () => {
@@ -118,7 +116,6 @@ test('testQuerySet Negative Result', async t => {
 
 test('testQuerySet Negative Result no Name', async t => {
     getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
-        console.log('!!!in mock!!! failingQuerySetNoName')
         return mockSessionFromQuerySet(querySet)
     }
     const error = await t.throwsAsync(async () => {
@@ -136,7 +133,6 @@ test('testQuerySet Failing Execution of Query', async t => {
     }
 
     getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
-        console.log('!!!in mock!!! erringDatabaseInfo')
         const session=mockSessionFromQuerySet(querySet)
         session.run = function(){
             throw new Error('uh-oh')
@@ -159,7 +155,6 @@ test('testQuerySet Failing Execution of Query no name', async t => {
     }
 
     getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
-        console.log('!!!in mock!!! erringDatabaseInfoquerySetNoNameForMovies')
         const session = mockSessionFromQuerySet(querySetNoNameForMovies)
         session.run = function(){
             throw new Error('uh-oh')

@@ -2,7 +2,7 @@ import {QuerySpec} from "../types/QuerySpec";
 import {DatabaseInfo} from "../types/DatabaseInfo";
 import {Session} from "neo4j-driver";
 
-const getSession = require('../../../test/custom/database/getSession')
+const getSession = require('../database/getSession')
 
 export async function testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo) {
     const session: Session = getSession.getSession(databaseInfo)

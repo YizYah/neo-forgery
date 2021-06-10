@@ -15,5 +15,9 @@ export * from './custom/types/ReturnedDataRecord'
 
 export const mockSessionFromQuerySet = require('./custom/session/mockSessionFromQuerySet')
 export const mockSessionFromFunction = require('./custom/session/mockSessionFromFunction')
+
+export const mockResultsFromCapturedOutput = require('./custom/results/mockResultsFromCapturedOutput')
+export const mockResultsFromData = require('./custom/results/mockResultsFromData')
+
 export const {testQuerySet} = require('./custom/session/testQuerySet')
 /* ns__custom_end export */

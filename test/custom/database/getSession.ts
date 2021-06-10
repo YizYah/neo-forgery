@@ -2,7 +2,7 @@ import { DatabaseInfo } from '../../../src/custom/types/DatabaseInfo';
 
 const neo4j = require('neo4j-driver');
 
-function getSession(databaseInfo: DatabaseInfo) {
+export function getSession(databaseInfo: DatabaseInfo) {
     const driver = neo4j.driver(
         databaseInfo.URI,
         neo4j.auth.basic(
@@ -14,4 +14,4 @@ function getSession(databaseInfo: DatabaseInfo) {
     return driver.session({database: databaseInfo.DATABASE});
 }
 
-module.exports = getSession;
+// module.exports = getSession;

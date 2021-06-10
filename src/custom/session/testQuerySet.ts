@@ -5,7 +5,7 @@ import {Session} from "neo4j-driver";
 const getSession = require('../../../test/custom/database/getSession')
 
 export async function testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo) {
-    const session: Session = getSession(databaseInfo)
+    const session: Session = getSession.getSession(databaseInfo)
 
     for (let i = 0; i < querySet.length; i++) {
         const querySpec: QuerySpec = querySet[i]
@@ -25,6 +25,7 @@ export async function testQuerySet(querySet: QuerySpec[], databaseInfo: Database
         } catch (error) {
             throw new Error(`error running query '${name? name : query}': ${error}`)
         }
+
         if (JSON.stringify(returnValue.records) !== JSON.stringify(output.records)) {
             let queryName = name
             if (!name) queryName = query

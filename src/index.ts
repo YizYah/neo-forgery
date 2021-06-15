@@ -11,7 +11,7 @@
 export * from './custom/types/DatabaseInfo'
 export * from './custom/types/QuerySpec'
 export * from './custom/types/MockOutput'
-export * from './custom/types/ReturnedDataRecord'
+export * from './custom/types/SampleOutputRecord'
 
 export const mockSessionFromQuerySet = require('./custom/session/mockSessionFromQuerySet')
 export const mockSessionFromFunction = require('./custom/session/mockSessionFromFunction')

@@ -1,4 +1,4 @@
-import {SampleOutputRecord} from "./ReturnedDataRecord";
+import {SampleOutputRecord} from "./SampleOutputRecord";
 
 export interface MockOutput {
     records: SampleOutputRecord[];

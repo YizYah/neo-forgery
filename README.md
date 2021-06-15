@@ -47,6 +47,8 @@ the easy way to mock a neo4j-driver session.
 * [:white_check_mark: What](#white_check_mark-what)
 * [:wrench: Usage](#wrench-usage)
 * [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
+* [Data Types](#data-types)
+* [Functions](#functions)
 <!-- tocstop -->
 
 [//]: # ( ns__custom_end toc )
@@ -131,20 +133,6 @@ You can pass your mock session into code that requires a session.
 
 An alternative to `mockResultsFromCapturedOutput` is `mockResultsFromData`, which takes as input an array of objects containing record values.  That can be useful if you know what data you want, and did not copy the Results from the data browser or from a `console.log` statement.
 
-
-## Functions Exposed
-```typescript
-mockSessionFromQuerySet
-mockSessionFromFunction
-
-mockResultsFromCapturedOutput
-mockResultsFromData
-
-
-
-```
-
-
 ## Checking the Validity of Your Mocked Queries
 The `neo-forgery` package is build based on the premise that unit tests must be fast.  By removing the need to query an actual database, you get instant results.  But what if your database changes and the queries no longer work?
 
@@ -172,7 +160,7 @@ This function is *not intended for unit tests*! The whole point of `neo-forgery`
 
 __*NOTE*__ Currently, `testQuerySet()` currently checks only `records` in query results, and only makes an exact match.  For instance, it will throw an error even the your `output` for a query is a subset of the data returned.  That is a problem if you want to create small sample outputs for testing purposes.  A future version of `neo-forgery` may remove that limitation by allowing you to specify a type of comparison for a query.
 
-## Exported Data Types
+## Data Types
 There are some interfaces that you can import into your TypeScript project.
 
 ### Database Specification
@@ -206,6 +194,46 @@ export interface QuerySpec {
     params?: ParamSet;
 }
 ```
+
+## Functions
+### Mock Results Generation
+There are two functions for generating mock output.  These can be used for confirming that output is what you expect it to be.
+
+```
+function mockResultsFromCapturedOutput(sampleOutput: MockOutput)
+```
+You can pass in results from a query as captured by a `console.log` statement, or based on results from the neo4j data browser.
+
+```
+mockResultsFromData(sampleResults: object[])
+```
+You can pass in an array of objects expected and it returns the mock results.
+
+
+### Mock Session Generation
+There are two functions for mock session generations, analogs to the [mock results generation functions above](#mock-results-generation).
+
+```
+mockSessionFromQuerySet
+```
+You pass in a QuerySet and an instance of a neo4j `Session` is returned.
+
+```
+mockSessionFromFunction(sessionRunMock: Function)
+```
+Pass in a Function and a session is generated.
+
+The `sessionRunMock` function shoud take in as parameters (query: string, params: any), and should normally return mock results.  You can use the [mock results generation functions above](#mock-results-generation) for the returned values.  You can also vary the output from the function based upon the query and params received. In theory you could create a session which emulates your entire database for all of the queries in your tests, and simply reuse the mock session in all of your tests.  Note that you can also throw errors if you are testing for them. 
+
+### Verification of Your Mock Query Results
+One last function is
+```
+testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
+```
+See [Checking the Validity of Your Mocked Queries](#checking-the-validity-of-your-mocked-queries) above.
+
+
+
 
 # <a name="heavy_exclamation_mark-limits"></a>:heavy_exclamation_mark: Limits
 1. This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver.  Rather, it helps when you can pass in a session as a parameter.

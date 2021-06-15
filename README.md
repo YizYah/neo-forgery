@@ -129,6 +129,22 @@ const querySet:QuerySpec[] = [
 
 You can pass your mock session into code that requires a session.
 
+An alternative to `mockResultsFromCapturedOutput` is `mockResultsFromData`, which takes as input an array of objects containing record values.  That can be useful if you know what data you want, and did not copy the Results from the data browser or from a `console.log` statement.
+
+
+## Functions Exposed
+```typescript
+mockSessionFromQuerySet
+mockSessionFromFunction
+
+mockResultsFromCapturedOutput
+mockResultsFromData
+
+
+
+```
+
+
 ## Checking the Validity of Your Mocked Queries
 The `neo-forgery` package is build based on the premise that unit tests must be fast.  By removing the need to query an actual database, you get instant results.  But what if your database changes and the queries no longer work?
 

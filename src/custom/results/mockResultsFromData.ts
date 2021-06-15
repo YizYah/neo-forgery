@@ -1,7 +1,6 @@
-import {ReturnedDataRecord} from "../types/ReturnedDataRecord";
 import {instanciateRecordList} from "../records/instanciateRecordList";
 
-export function mockResultsFromData(sampleResults: ReturnedDataRecord[]) {
+export function mockResultsFromData(sampleResults: object[]) {
     const records = instanciateRecordList(sampleResults)
     return {
         records,

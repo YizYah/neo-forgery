@@ -1,4 +1,4 @@
-import {SampleOutputRecord} from "../types/ReturnedDataRecord";
+import {SampleOutputRecord} from "../types/SampleOutputRecord";
 import {instanciateRecordFromSampleOutput} from "./instanciateRecordFromSampleOutput";
 
 // const Record = require('neo4j-driver').types.Record ;

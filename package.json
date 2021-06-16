@@ -66,7 +66,8 @@
     ],
     "require": [
       "ts-node/register"
-    ]
+    ],
+    "timeout": "20s"
   },
   "config": {
     "commitizen": {

@@ -232,13 +232,8 @@ testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
 ```
 See [Checking the Validity of Your Mocked Queries](#checking-the-validity-of-your-mocked-queries) above.
 
-
-
-
 # <a name="heavy_exclamation_mark-limits"></a>:heavy_exclamation_mark: Limits
-1. This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver.  Rather, it helps when you can pass in a session as a parameter.
-
-  That is a limitation, but arguably it is better style anyway to pass in a session as an argument. Doing so isolates entirely the session and database info from the queries being performed.
+1. This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver unless you stub the driver and overwrite the method `session()`.  The intended use case is when a session is passed in as a parameter. But arguably passing in a session is better style anyway. Doing so isolates entirely the session and database info from the queries being performed.
 
 2. The optional `config` parameter for a `Session.run()` is not supported currently.
 

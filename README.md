@@ -1,4 +1,4 @@
-
+﻿
 [//]: # ( ns__file unit: standard, comp: README.md )
 
 [//]: # ( ns__custom_start beginning )
@@ -46,9 +46,9 @@ the easy way to mock a neo4j-driver session.
 * [:clipboard: Why](#clipboard-why)
 * [:white_check_mark: What](#white_check_mark-what)
 * [:wrench: Usage](#wrench-usage)
+* [:paperclip:Data Types](#paperclip-data-types)
+* [:key:Functions](#key-functions)
 * [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
-* [Data Types](#data-types)
-* [Functions](#functions)
 <!-- tocstop -->
 
 [//]: # ( ns__custom_end toc )
@@ -160,7 +160,7 @@ This function is *not intended for unit tests*! The whole point of `neo-forgery`
 
 __*NOTE*__ Currently, `testQuerySet()` currently checks only `records` in query results, and only makes an exact match.  For instance, it will throw an error even the your `output` for a query is a subset of the data returned.  That is a problem if you want to create small sample outputs for testing purposes.  A future version of `neo-forgery` may remove that limitation by allowing you to specify a type of comparison for a query.
 
-## Data Types
+## <a name="paperclip-data-types"></a>:paperclip: Data Types
 There are some interfaces that you can import into your TypeScript project.
 
 ### Database Specification
@@ -195,7 +195,7 @@ export interface QuerySpec {
 }
 ```
 
-## Functions
+## <a name="key-functions"></a>:key: Functions
 ### Mock Results Generation
 There are two functions for generating mock output.  These can be used for confirming that output is what you expect it to be.
 

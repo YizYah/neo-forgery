@@ -98,7 +98,7 @@ const sampleOutput = {
 3. create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 
 ```
-import {QuerySpec} from 'neo-forgery'
+import {QuerySpec, mockSessionFromQuerySet} from 'neo-forgery'
 
 const querySet:QuerySpec[] = [
     {

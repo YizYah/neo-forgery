@@ -94,6 +94,7 @@ __*NOTE*__ If you copy from the data browser, you'll only get the `records` port
 ```
 const sampleOutput = {
   'records': [{ ... } ... ]
+}
 ```
 3. create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 
@@ -233,9 +234,42 @@ testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
 See [Checking the Validity of Your Mocked Queries](#checking-the-validity-of-your-mocked-queries) above.
 
 # <a name="heavy_exclamation_mark-limits"></a>:heavy_exclamation_mark: Limits
-1. This package will not help you to test a section of code where you explicitly declare a session using neo4j-driver unless you stub the driver and overwrite the method `session()`.  The intended use case is when a session is passed in as a parameter. But arguably passing in a session is better style anyway. Doing so isolates entirely the session and database info from the queries being performed.
+Some limits to neo-forgery are intentional. There's no testing of data updates, because it should not be relevant to unit tests.  You are not testing the database server, or even the queries themselves.  A query is just a string from the standpoint of your unit, and your unit tests should assume that the response is predictable and unchanging.  An end to end test can confirm that independently.  The most that you might need from the standpoint of unit testing is to confirm that a write query was executed, which you can do with a [sinon spy](https://sinonjs.org/releases/latest/spies/).
 
-2. The optional `config` parameter for a `Session.run()` is not supported currently.
+But `neo-forgery` is new, and there still are things that it should be able to do that have not yet been implemented.
+
+1. Currently, you can't have more than one result in a given mock session for a given query and parameter combination.  That's limiting, because you might have a sequence that queries for something, changes it, and queries for the new value.  For instance, your unit may check whether someone has a registered email, and if it's not there you may add it and then confirm that it is there and proceed with further steps based on that output. There is a planned implementation fixing that problem.
+2. transactions (`session.readTransaction()` and `session.writeTransaction()`) are not yet implemented. 
+3. The optional `config` parameter for a `Session.run()` is not supported currently. Much of the config may be irrelevant to unit testing, so that will probably be implemented as needed.
+4. The intended use case is when a session is passed in as a parameter. Arguably passing in a session is better style anyway in most cases. Doing so isolates entirely the session and database info from the queries being performed. But if your unit explicitly declares a session using `neo4j-driver` you will have to stub the driver.  Here's an example of a stub:
+
+    ```
+    const neo4j = require('neo4j-driver');
+
+    const mockDriver = () => {
+      const driver = neo4j.driver(
+        process.env.DB_URI,
+        neo4j.auth.basic(
+          process.env.DB_USER,
+          process.env.DB_PASSWORD,
+        ),
+      );
+
+      const session = mockSessionFromQuerySet(querySet);
+        driver.session = () => session
+        return driver;
+
+      return driver;
+    };
+    
+    ```
+    You can then use [proxyquire](https://www.npmjs.com/package/proxyquire) or whatever tool you'd like to stub out the definition of `driver` in your code and replace it with `mockDriver`.
+  
+    ```
+    const { myUnit } = proxyquire('../src/myUnit', {
+      'neo4j-driver': { 'driver': mockDriver },
+    });
+    ```
 
 [//]: # ( ns__custom_end APIIntro )
 

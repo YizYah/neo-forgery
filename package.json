@@ -24,7 +24,7 @@
   "types": "lib/index.d.ts",
   "repository": "YizYah/neo-forgery",
   "scripts": {
-    "build": "tsc",
+    "build your own ": "tsc",
     "commit": "git-cz",
     "int": "ava --config int-tests.config.cjs",
     "lint": "eslint \"src/**/*.ts\"",

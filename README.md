@@ -49,6 +49,7 @@ the easy way to mock a neo4j-driver session.
 * [:paperclip:Data Types](#paperclip-data-types)
 * [:key:Functions](#key-functions)
 * [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
+* [:blue_book:Tutorial](#blue_book-tutorial)
 <!-- tocstop -->
 
 [//]: # ( ns__custom_end toc )
@@ -59,7 +60,7 @@ I couldn't find any other straightforward way to mock the neo4j driver during un
 # <a name="white_check_mark-what"></a>:white_check_mark: What
 A mock session generator for neo4j.  You set up a mock neo4j session by specifying an array of query spec objects.  Each query spec object contains a query string, param set, and expected response.
 
-You can then pass in your session as a parameter to a function to test instead of a real session.
+You can then pass in your session as a parameter to a function to test instead of a real session. It now works for both running queries directly (`session.run(...)`) and transactions (`session.readTransaction()` and `session.writeTransaction()`). 
 
 And there's a function to test a query set against the live database, not intended for unit tests.  That way, whenever you change your database you can confirm that the queries in your mock session are all still working!
 
@@ -239,9 +240,8 @@ Some limits to neo-forgery are intentional. There's no testing of data updates, 
 But `neo-forgery` is new, and there still are things that it should be able to do that have not yet been implemented.
 
 1. Currently, you can't have more than one result in a given mock session for a given query and parameter combination.  That's limiting, because you might have a sequence that queries for something, changes it, and queries for the new value.  For instance, your unit may check whether someone has a registered email, and if it's not there you may add it and then confirm that it is there and proceed with further steps based on that output. There is a planned implementation fixing that problem.
-2. transactions (`session.readTransaction()` and `session.writeTransaction()`) are not yet implemented. 
-3. The optional `config` parameter for a `Session.run()` is not supported currently. Much of the config may be irrelevant to unit testing, so that will probably be implemented as needed.
-4. The intended use case is when a session is passed in as a parameter. Arguably passing in a session is better style anyway in most cases. Doing so isolates entirely the session and database info from the queries being performed. But if your unit explicitly declares a session using `neo4j-driver` you will have to stub the driver.  Here's an example of a stub:
+2. The optional `config` parameter for a `Session.run()` is not supported currently. Much of the config may be irrelevant to unit testing, so that will probably be implemented as needed.
+3. The intended use case is when a session is passed in as a parameter. Arguably passing in a session is better style anyway in most cases. Doing so isolates entirely the session and database info from the queries being performed. But if your unit explicitly declares a session using `neo4j-driver` you will have to stub the driver.  Here's an example of a stub:
 
     ```
     const neo4j = require('neo4j-driver');
@@ -270,6 +270,9 @@ But `neo-forgery` is new, and there still are things that it should be able to d
       'neo4j-driver': { 'driver': mockDriver },
     });
     ```
+
+# <a name="blue_book-tutorial"></a>:blue_book:Tutorial
+Check out this [tutorial to create a project and test](https://medium.com/neo4j/how-to-mock-neo4j-calls-in-node-7066c52ac468).
 
 [//]: # ( ns__custom_end APIIntro )
 

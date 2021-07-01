@@ -1,4 +1,4 @@
-import Session from 'neo4j-driver/types/session';
+import Session from 'neo4j-driver-core/types/session';
 
 const neo4j = require('neo4j-driver');
 
@@ -8,7 +8,7 @@ const mockDatabaseInfo = {
     PASSWORD: 'thisIsAfakeDatabase',
 };
 
-export function mockSessionFromFunction(sessionRunMock: Function): Session {
+export function mockSessionFromFunction(mockRun: Function): Session {
     const driver = neo4j.driver(
         mockDatabaseInfo.URI,
         neo4j.auth.basic(
@@ -17,7 +17,25 @@ export function mockSessionFromFunction(sessionRunMock: Function): Session {
         )
     )
     const fakeSession = driver.session()
-    fakeSession.run = sessionRunMock
+    fakeSession.run = mockRun
+
+    const mockBeginTransaction = () => {
+        let _isOpen = true;
+        return {
+            run: mockRun,
+            commit: () => {
+                _isOpen = false;
+                return Promise.resolve()
+            },
+            rollback: () => {
+                _isOpen = false;
+                return Promise.resolve();
+            },
+            isOpen: () => _isOpen
+        }
+    }
+    fakeSession._beginTransaction = mockBeginTransaction
+
     return fakeSession
 }
 

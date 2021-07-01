@@ -12,3 +12,15 @@ test('mockSessionFromFunction', t => {
     t.is(session.run, sessionRunMock)
     t.not(session.run, ()=>{return 1})
 })
+
+test('mockSessionFromFunction with transacation', async t => {
+    const session = mockSessionFromFunction(sessionRunMock)
+    const tx = session._beginTransaction()
+    t.is(tx.run, sessionRunMock)
+    t.is(tx.isOpen(), true)
+    t.is(await tx.rollback(), await Promise.resolve())
+    t.is(await tx.commit(), await Promise.resolve())
+    t.is(await tx.commit(), await Promise.resolve())
+    t.is(tx.isOpen(), false)
+})
+

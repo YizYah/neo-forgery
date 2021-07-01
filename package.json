@@ -26,6 +26,7 @@
   "scripts": {
     "build": "tsc",
     "commit": "git-cz",
+    "int": "ava --config int-tests.config.cjs",
     "lint": "eslint \"src/**/*.ts\"",
     "lintfix": "eslint \"src/**/*.ts\" --fix",
     "test": "ava",
@@ -38,7 +39,7 @@
   "dependencies": {
     "@types/node": "^14.14.19",
     "deep-equal": "^2.0.5",
-    "neo4j-driver": "^4.2.3",
+    "neo4j-driver": "^4.3.1",
     "path": "^0.12.7",
     "tslib": "^2.0.3"
   },
@@ -48,6 +49,7 @@
     "ava": "^3.15.0",
     "commitizen": "^4.2.3",
     "cz-conventional-changelog": "^3.2.0",
+    "dotenv": "^10.0.0",
     "eslint": "^7.23.0",
     "ghooks": "^2.0.4",
     "nyc": "^15.1.0",

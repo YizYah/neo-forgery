@@ -12,4 +12,5 @@ yalc.lock
 
 /* ns__custom_start extra */
 .idea
+.env
 /* ns__custom_end extra */

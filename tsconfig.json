@@ -4,7 +4,7 @@
     "importHelpers": true,
     "module": "commonjs",
     "outDir": "lib",
-    "rootDir": "src",
+    "rootDirs": ["./src", "./test/custom/data"],
     "strict": true,
     "target": "es2017"
   },

@@ -89,5 +89,6 @@ test('mockSessionFromQuerySet returns error with false input', async (t) => {
     const error = await t.throwsAsync(async () => {
         const output = await session.run(query, ['bar','baz'])
     });
-    t.regex(error.message, /does not contain the given query and params/);
+    // t.regex(error.message, /does not contain the given query and params/);
+    t.regex(error.message, /your params were not matched./);
 })

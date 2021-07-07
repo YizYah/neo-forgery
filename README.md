@@ -46,10 +46,11 @@ the easy way to mock a neo4j-driver session.
 * [:clipboard: Why](#clipboard-why)
 * [:white_check_mark: What](#white_check_mark-what)
 * [:wrench: Usage](#wrench-usage)
-* [:paperclip:Data Types](#paperclip-data-types)
+* [:paperclip: Data Types](#paperclip-data-types)
 * [:key:Functions](#key-functions)
 * [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
-* [:blue_book:Tutorial](#blue_book-tutorial)
+* [:blue_book: Tutorial](#blue_book-tutorial)
+* [:thumbsup: Credits](#thumbsup-credits)
 <!-- tocstop -->
 
 [//]: # ( ns__custom_end toc )
@@ -71,7 +72,7 @@ Include the package in `dev`:
 npm i -D neo-forgery
 ```
 
-## Mocking a Query
+### Mocking a Query
 To mock a query, simply:
 1. capture the result from the query. For instance, if you call the query in your code already with a `console.log` statement:
      ```
@@ -137,7 +138,7 @@ You can pass your mock session into code that requires a session.
 
 An alternative to `mockResultsFromCapturedOutput` is `mockResultsFromData`, which takes as input an array of objects containing record values.  That can be useful if you know what data you want, and did not copy the Results from the data browser or from a `console.log` statement.
 
-## Checking the Validity of Your Mocked Queries
+### Checking the Validity of Your Mocked Queries
 The `neo-forgery` package is build based on the premise that unit tests must be fast.  By removing the need to query an actual database, you get instant results.  But what if your database changes and the queries no longer work?
 
 To solve that problem, `neo-forgery` exports a function:
@@ -229,7 +230,7 @@ Pass in a Function and a session is generated.
 
 The `sessionRunMock` function shoud take in as parameters (query: string, params: any), and should normally return mock results.  You can use the [mock results generation functions above](#mock-results-generation) for the returned values.  You can also vary the output from the function based upon the query and params received. In theory you could create a session which emulates your entire database for all of the queries in your tests, and simply reuse the mock session in all of your tests.  Note that you can also throw errors if you are testing for them. 
 
-## Mock Driver Generation
+### Mock Driver Generation
 There are cases where you will have to generate a mock driver.  The most typical use case is for mocking an Apollo Server that uses the [@neo4j/graphql](https://www.npmjs.com/package/@neo4j/graphql) library.
 
 The following function can be used:
@@ -322,14 +323,16 @@ But `neo-forgery` is new, and there still are things that it should be able to d
 1. Currently, you can't have more than one result in a given mock session for a given query and parameter combination.  That's limiting, because you might have a sequence that queries for something, changes it, and queries for the new value.  For instance, your unit may check whether someone has a registered email, and if it's not there you may add it and then confirm that it is there and proceed with further steps based on that output. There is a planned implementation fixing that problem.
 2. The optional `config` parameter for a `Session.run()` is not supported currently. Much of the config may be irrelevant to unit testing, so that will probably be implemented as needed.
 
-# <a name="blue_book-tutorial"></a>:blue_book:Tutorial
+# <a name="blue_book-tutorial"></a>:blue_book: Tutorial
 Check out this [tutorial to create a project and test](https://medium.com/neo4j/how-to-mock-neo4j-calls-in-node-7066c52ac468).
 
 
-# Special Thanks
-Credit goes to some people at [neo4j](https://neo4j.com/) for helping me with this.  
-* First and foremost to [Antonio Barcélos](https://github.com/bigmontz) on the [neo4j-driver](https://github.com/neo4j/neo4j-javascript-driver) team for the working solution for mocking a transaction.
-* Thanks to [Darrell Warde](https://github.com/darrellwarde) and [Dan Starns](https://github.com/danstarns) on the [@neo4j/graphql](https://github.com/neo4j/graphql) team for some very helpful advice.
+# <a name="thumbsup-credits"></a>:thumbsup: Credits
+Special thanks goes to some people at [neo4j](https://neo4j.com/) for helping me with this.  
+
+:thumbsup: First and foremost to [Antonio Barcélos](https://github.com/bigmontz) on the [neo4j-driver](https://github.com/neo4j/neo4j-javascript-driver) team for the working solution for mocking a transaction.
+
+:thumbsup: Thanks to [Darrell Warde](https://github.com/darrellwarde) and [Dan Starns](https://github.com/danstarns) on the [@neo4j/graphql](https://github.com/neo4j/graphql) team for some very helpful advice.
 
 [//]: # ( ns__custom_end APIIntro )
 

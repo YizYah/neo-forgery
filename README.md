@@ -74,63 +74,64 @@ npm i -D neo-forgery
 ## Mocking a Query
 To mock a query, simply:
 1. capture the result from the query. For instance, if you call the query in your code already with a `console.log` statement:
-```
-    (result: any) => {
-       console.log(`result=${JSON.stringify(result)}`)
-       ...
+     ```
+        (result: any) => {
+           console.log(`result=${JSON.stringify(result)}`)
+           ...
+        }
+     ```
+
+     Or you can run the query in the neo4j data browser, then on the left click the `Code` button and copy the `Response`:.
+
+    ![response](images/gettingResponse.jpg)
+
+    __*NOTE*__ If you copy from the data browser, you'll only get the `records` portion of the output.  You'll have to paste it in as a value for `records`  in an object:
+    ```
+    {
+        records: <Response>
     }
-```
-Or you can run the query in the neo4j data browser, then on the left click the `Code` button and copy the `Response`:.
-
-![response](images/gettingResponse.jpg)
-
-__*NOTE*__ If you copy from the data browser, you'll only get the `records` portion of the output.  You'll have to paste it in as a value for `records`  in an object:
-```
-{
-    records: <Response>
-}
-```
+    ```
 
 2. copy and store the output as a const, e.g.:
-```
-const sampleOutput = {
-  'records': [{ ... } ... ]
-}
-```
-3. Currently, you must manually replace any integers stored as `{ low: <value>, high: 0 }` as `<value>`.  For instance, `{ low: <value>, high: 0 }` mmust be replaced with `1994`.  We are planning on removing this step shortly.
-4. create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
-
-```
-import {QuerySpec, mockSessionFromQuerySet} from 'neo-forgery'
-
-const querySet:QuerySpec[] = [
-    {
-        name: 'movies',
-        query: 'MATCH (movie:Movie)' +
-            ' WHERE toLower(movie.title) CONTAINS $query' +
-            ' RETURN movie',
-        output: expectedResultForMovieQuery,
-        params: {query:"matrix"}
-    },
-    {
-        name: 'title',
-        query: 'MATCH (movie:Movie {title:$title}) ' +
-            'OPTIONAL MATCH (movie)<-[rel]-(person:Person) ' +
-            'RETURN movie.title as title, ' +
-            'collect({name:person.name, role:rel.roles, job:head(split(toLower(type(rel)),\'_\'))}) as cast ' +
-            'LIMIT 1',
-        params: {title: 'Apollo 13'},
-        output: expectedResultsForTitleQuery,
+    ```
+    const sampleOutput = {
+      'records': [{ ... } ... ]
     }
-]
-```
+    ```
+3. Currently, you must manually replace any integers stored as `{ low: <value>, high: 0 }` as `<value>`.  For instance, `{ low: 1994, high: 0 }` must be replaced with `1994`.  We are planning on removing this step shortly.
+4. Create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 
-3. generate a mockSession that returns it using `mockSession`.  You can then call `mockResultsFromCapturedOutput` to generate a true neo4j array of the Record type to compare the expected output to what your mock session returns.
-```
-    const session = mockSessionFromQuerySet(querySet)
-    const output = await session.run(query, params)
-    t.deepEqual(output,mockResultsFromCapturedOutput(expectedOutput))
-```
+    ```
+    import {QuerySpec, mockSessionFromQuerySet} from 'neo-forgery'
+    
+    const querySet:QuerySpec[] = [
+        {
+            name: 'movies',
+            query: 'MATCH (movie:Movie)' +
+                ' WHERE toLower(movie.title) CONTAINS $query' +
+                ' RETURN movie',
+            output: expectedResultForMovieQuery,
+            params: {query:"matrix"}
+        },
+        {
+            name: 'title',
+            query: 'MATCH (movie:Movie {title:$title}) ' +
+                'OPTIONAL MATCH (movie)<-[rel]-(person:Person) ' +
+                'RETURN movie.title as title, ' +
+                'collect({name:person.name, role:rel.roles, job:head(split(toLower(type(rel)),\'_\'))}) as cast ' +
+                'LIMIT 1',
+            params: {title: 'Apollo 13'},
+            output: expectedResultsForTitleQuery,
+        }
+    ]
+    ```
+
+5. generate a mockSession that returns it using `mockSession`.  You can then call `mockResultsFromCapturedOutput` to generate a true neo4j array of the Record type to compare the expected output to what your mock session returns.
+    ```
+        const session = mockSessionFromQuerySet(querySet)
+        const output = await session.run(query, params)
+        t.deepEqual(output,mockResultsFromCapturedOutput(expectedOutput))
+    ```
 
 You can pass your mock session into code that requires a session.
 

@@ -46,8 +46,8 @@ the easy way to mock a neo4j-driver session.
 * [:clipboard: Why](#clipboard-why)
 * [:white_check_mark: What](#white_check_mark-what)
 * [:wrench: Usage](#wrench-usage)
-* [:paperclip: Data Types](#paperclip-data-types)
 * [:key:Functions](#key-functions)
+* [:paperclip: Data Types](#paperclip-data-types)
 * [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
 * [:blue_book: Tutorial](#blue_book-tutorial)
 * [:thumbsup: Credits](#thumbsup-credits)
@@ -61,7 +61,7 @@ I couldn't find any other straightforward way to mock the neo4j driver during un
 # <a name="white_check_mark-what"></a>:white_check_mark: What
 A mock session generator for neo4j.  You set up a mock neo4j session by specifying an array of query spec objects.  Each query spec object contains a query string, param set, and expected response.
 
-You can then pass in your session as a parameter to a function to test instead of a real session. It now works for both running queries directly (`session.run(...)`) and transactions (`session.readTransaction()` and `session.writeTransaction()`). 
+You can then pass in your session as a parameter to a function to test instead of a real session. It works for both running queries directly (`session.run(...)`) and transactions (`session.readTransaction()` and `session.writeTransaction()`). You also can generate a mock driver, build your server using it rather than the real driver, and mock all of the queries in the server.
 
 And there's a function to test a query set against the live database, not intended for unit tests.  That way, whenever you change your database you can confirm that the queries in your mock session are all still working!
 
@@ -137,68 +137,6 @@ To mock a query, simply:
 You can pass your mock session into code that requires a session.
 
 An alternative to `mockResultsFromCapturedOutput` is `mockResultsFromData`, which takes as input an array of objects containing record values.  That can be useful if you know what data you want, and did not copy the Results from the data browser or from a `console.log` statement.
-
-### Checking the Validity of Your Mocked Queries
-The `neo-forgery` package is build based on the premise that unit tests must be fast.  By removing the need to query an actual database, you get instant results.  But what if your database changes and the queries no longer work?
-
-To solve that problem, `neo-forgery` exports a function:
-```
-async function testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
-```
-You can pass in your set of queries along with the information needed for a database, and you can check whether the queries work for the given database.  If any of them fail to return what you specify as output, and error is returned.
-
-For example:
-```
-import { DatabaseInfo, testQuerySet } from 'neo-forgery'
-const moviesDatabaseInfo: DatabaseInfo = {
-  URI: 'neo4j+s://demo.neo4jlabs.com',
-  USER: 'movies',
-  PASSWORD: 'movies',
-  DATABASE: 'movies',
-};
-
-const queriesWorking = await testQuerySet(querySet, moviesDatabaseInfo)
-t.is(queriesWorking, "success")  
-```
-
-This function is *not intended for unit tests*! The whole point of `neo-forgery` is to remove the need to query an actual database when you run your unit tests.  Rather, consider creating a separate test that you call regularly, perhaps as part of a regression test or after you change your database.
-
-__*NOTE*__ Currently, `testQuerySet()` currently checks only `records` in query results, and only makes an exact match.  For instance, it will throw an error even the your `output` for a query is a subset of the data returned.  That is a problem if you want to create small sample outputs for testing purposes.  A future version of `neo-forgery` may remove that limitation by allowing you to specify a type of comparison for a query.
-
-## <a name="paperclip-data-types"></a>:paperclip: Data Types
-There are some interfaces that you can import into your TypeScript project.
-
-### Database Specification
-You must use a DatabaseInfo type for specifying the database that you want to use for running [testQuerySet](#checking-the-validity-of-your-mocked-queries).
-```
-interface DatabaseInfo {
-  URI: string;
-  USER: string;
-  PASSWORD: string;
-  DATABASE?: string;
-}
-```
-
-### Query Response Specification 
-The output from a query is specified via a `MockOutput` instance:
-```
-interface MockOutput {
-    records: SampleOutputRecord[];
-    summary?: any;
-}
-```
-Normally, you won't need to worry about the details for that.  You can just capture the output in the ways specified [above](#mocking-a-query).
-
-### Query Specifications
-A query set is an instance of `QuerySpec[]`:
-```
-export interface QuerySpec {
-    name?: string;
-    query: string;
-    output: MockOutput;
-    params?: ParamSet;
-}
-```
 
 ## <a name="key-functions"></a>:key: Functions
 ### Mock Results Generation
@@ -307,13 +245,77 @@ const databaseInfo = getDatabaseInfo(
 )
 ```
 
-
 ### Verification of Your Mock Query Results
 One last function is
 ```
 testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
 ```
-See [Checking the Validity of Your Mocked Queries](#checking-the-validity-of-your-mocked-queries) above.
+See [Checking the Validity of Your Mocked Queries](#checking-the-validity-of-your-mocked-queries) below.
+
+## <a name="paperclip-data-types"></a>:paperclip: Data Types
+There are some interfaces that you can import into your TypeScript project.
+
+### Database Specification
+You must use a DatabaseInfo type for specifying the database that you want to use for running [testQuerySet](#checking-the-validity-of-your-mocked-queries).
+```
+interface DatabaseInfo {
+  URI: string;
+  USER: string;
+  PASSWORD: string;
+  DATABASE?: string;
+}
+```
+
+### Query Response Specification 
+The output from a query is specified via a `MockOutput` instance:
+```
+interface MockOutput {
+    records: SampleOutputRecord[];
+    summary?: any;
+}
+```
+Normally, you won't need to worry about the details for that.  You can just capture the output in the ways specified [above](#mocking-a-query).
+
+### Query Specifications
+A query set is an instance of `QuerySpec[]`:
+```
+export interface QuerySpec {
+    name?: string;
+    query: string;
+    output: MockOutput;
+    params?: ParamSet;
+}
+```
+
+### Checking the Validity of Your Mocked Queries
+The `neo-forgery` package is build based on the premise that unit tests must be fast.  By removing the need to query an actual database, you get instant results.  But what if your database changes and the queries no longer work?
+
+To solve that problem, `neo-forgery` exports a function:
+```
+async function testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
+```
+You can pass in your set of queries along with the information needed for a database, and you can check whether the queries work for the given database.  If any of them fail to return what you specify as output, and error is returned.
+
+For example:
+```
+import { DatabaseInfo, testQuerySet } from 'neo-forgery'
+const moviesDatabaseInfo: DatabaseInfo = {
+  URI: 'neo4j+s://demo.neo4jlabs.com',
+  USER: 'movies',
+  PASSWORD: 'movies',
+  DATABASE: 'movies',
+};
+
+const queriesWorking = await testQuerySet(querySet, moviesDatabaseInfo)
+t.is(queriesWorking, "success")  
+```
+
+This function is *not intended for unit tests*! The whole point of `neo-forgery` is to remove the need to query an actual database when you run your unit tests.  Rather, consider creating a separate test that you call regularly, perhaps as part of a regression test or after you change your database.
+
+__*NOTE*__ Currently, `testQuerySet()` currently checks only `records` in query results, and only makes an exact match.  For instance, it will throw an error even the your `output` for a query is a subset of the data returned.  That is a problem if you want to create small sample outputs for testing purposes.  A future version of `neo-forgery` may remove that limitation by allowing you to specify a type of comparison for a query.
+
+
+
 
 # <a name="heavy_exclamation_mark-limits"></a>:heavy_exclamation_mark: Limits
 Some limits to neo-forgery are intentional. There's no testing of data updates, because it should not be relevant to unit tests.  You are not testing the database server, or even the queries themselves.  A query is just a string from the standpoint of your unit, and your unit tests should assume that the response is predictable and unchanging.  An end to end test can confirm that independently.  The most that you might need from the standpoint of unit testing is to confirm that a write query was executed, which you can do with a [sinon spy](https://sinonjs.org/releases/latest/spies/).

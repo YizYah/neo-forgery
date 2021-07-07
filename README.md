@@ -332,7 +332,7 @@ Special thanks goes to some people at [neo4j](https://neo4j.com/) for helping me
 
 :thumbsup: First and foremost to [Antonio Barcélos](https://github.com/bigmontz) on the [neo4j-driver](https://github.com/neo4j/neo4j-javascript-driver) team for the working solution for mocking a transaction.
 
-:thumbsup: Thanks to [Darrell Warde](https://github.com/darrellwarde) and [Dan Starns](https://github.com/danstarns) on the [@neo4j/graphql](https://github.com/neo4j/graphql) team for some very helpful advice.
+:thumbsup: Thanks also to [Darrell Warde](https://github.com/darrellwarde) and [Dan Starns](https://github.com/danstarns) on the [@neo4j/graphql](https://github.com/neo4j/graphql) team for some very helpful advice.
 
 [//]: # ( ns__custom_end APIIntro )
 

@@ -66,7 +66,7 @@ And there's a function to test a query set against the live database, not intend
 
 # <a name="wrench-usage"></a>:wrench: Usage
 
-Include the package in dev:
+Include the package in `dev`:
 ```
 npm i -D neo-forgery
 ```
@@ -97,7 +97,8 @@ const sampleOutput = {
   'records': [{ ... } ... ]
 }
 ```
-3. create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
+3. Currently, you must manually replace any integers stored as `{ low: <value>, high: 0 }` as `<value>`.  For instance, `{ low: <value>, high: 0 }` mmust be replaced with `1994`.  We are planning on removing this step shortly.
+4. create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 
 ```
 import {QuerySpec, mockSessionFromQuerySet} from 'neo-forgery'
@@ -227,6 +228,84 @@ Pass in a Function and a session is generated.
 
 The `sessionRunMock` function shoud take in as parameters (query: string, params: any), and should normally return mock results.  You can use the [mock results generation functions above](#mock-results-generation) for the returned values.  You can also vary the output from the function based upon the query and params received. In theory you could create a session which emulates your entire database for all of the queries in your tests, and simply reuse the mock session in all of your tests.  Note that you can also throw errors if you are testing for them. 
 
+## Mock Driver Generation
+There are cases where you will have to generate a mock driver.  The most typical use case is for mocking an Apollo Server that uses the [@neo4j/graphql](https://www.npmjs.com/package/@neo4j/graphql) library.
+
+The following function can be used:
+```
+mockDriver(session: Session, databaseInfo?: DatabaseInfo)
+```
+* `session` can be generated using either of the [Mock Session Generation Functions](#mock-session-generation) above.
+* You probably don't need to specify anything about a real database.  But if you want the proper info stored for the driver you can generate `databaseInfo` is generate using the utility function [getDatabaseInfo](#getdatabaseinfo), e.g.:
+ ```
+ const databaseInfo = getDatabaseInfo(
+   process.env.URI,
+   process.env.USER_NAME,
+   process.env.PASSWORD
+ )
+ ```
+You can insert your `driver` into a `context` used with `ApolloServer`, e.g.:
+```
+function context({ event, context }: { event: any, context: any }): any {
+  return ({
+    event,
+    context,
+    driver,
+    user,
+    cypherParams,
+  });
+}
+
+const server = new ApolloServer(
+  {
+    schema,
+    context,
+    cors: {
+      origin: '*',
+      methods: 'GET,HEAD,POST',
+    },
+    introspection: true,
+  });
+```
+Then you can include calls inside of your session.
+
+__*Note*__: when you use `@cypher` directives, the [@neo4j/graphql](https://www.npmjs.com/package/@neo4j/graphql) library will augment your query text as well as your parameters. So the first time the query will probably fail.  But neo-forgery automatically tells you clearly how you need to change both the queries and the parameters to be able to match. So you can just copy the proper values and replace your own.
+
+Another usage of your driver is overriding `driver` in code that uses one.  You can use [proxyquire](https://www.npmjs.com/package/proxyquire) or whatever tool you'd like to stub out the definition of `driver` in your code and replace it with `mockDriver`.
+  
+    ```
+    const { myUnit } = proxyquire('../src/myUnit', {
+      'neo4j-driver': { 'driver': mockDriver },
+    });
+    ```
+
+### Utilities
+Some utilities are planned to make your like simpler.  Currently, there is only `getDatabaseInfo`.
+
+#### getDatabaseInfo
+```
+export function getDatabaseInfo(
+  uri?: string,
+  user?: string,
+  password?: string,
+  database?: string,
+)
+```
+You can insert the information that you need.  Usually you won't need it.
+
+Here's an example usage based upon an `.env` file:
+```
+require('dotenv').config();
+import { getDatabaseInfo } from 'neo-forgery';
+
+const databaseInfo = getDatabaseInfo(
+  process.env.URI,
+  process.env.USER_NAME,
+  process.env.PASSWORD
+)
+```
+
+
 ### Verification of Your Mock Query Results
 One last function is
 ```
@@ -241,38 +320,15 @@ But `neo-forgery` is new, and there still are things that it should be able to d
 
 1. Currently, you can't have more than one result in a given mock session for a given query and parameter combination.  That's limiting, because you might have a sequence that queries for something, changes it, and queries for the new value.  For instance, your unit may check whether someone has a registered email, and if it's not there you may add it and then confirm that it is there and proceed with further steps based on that output. There is a planned implementation fixing that problem.
 2. The optional `config` parameter for a `Session.run()` is not supported currently. Much of the config may be irrelevant to unit testing, so that will probably be implemented as needed.
-3. The intended use case is when a session is passed in as a parameter. Arguably passing in a session is better style anyway in most cases. Doing so isolates entirely the session and database info from the queries being performed. But if your unit explicitly declares a session using `neo4j-driver` you will have to stub the driver.  Here's an example of a stub:
-
-    ```
-    const neo4j = require('neo4j-driver');
-
-    const mockDriver = () => {
-      const driver = neo4j.driver(
-        process.env.DB_URI,
-        neo4j.auth.basic(
-          process.env.DB_USER,
-          process.env.DB_PASSWORD,
-        ),
-      );
-
-      const session = mockSessionFromQuerySet(querySet);
-        driver.session = () => session
-        return driver;
-
-      return driver;
-    };
-    
-    ```
-    You can then use [proxyquire](https://www.npmjs.com/package/proxyquire) or whatever tool you'd like to stub out the definition of `driver` in your code and replace it with `mockDriver`.
-  
-    ```
-    const { myUnit } = proxyquire('../src/myUnit', {
-      'neo4j-driver': { 'driver': mockDriver },
-    });
-    ```
 
 # <a name="blue_book-tutorial"></a>:blue_book:Tutorial
 Check out this [tutorial to create a project and test](https://medium.com/neo4j/how-to-mock-neo4j-calls-in-node-7066c52ac468).
+
+
+# Special Thanks
+Credit goes to some people at [neo4j](https://neo4j.com/) for helping me with this.  
+* First and foremost to [Antonio Barcélos](https://github.com/bigmontz) on the [neo4j-driver](https://github.com/neo4j/neo4j-javascript-driver) team for the working solution for mocking a transaction.
+* Thanks to [Darrell Warde](https://github.com/darrellwarde) and [Dan Starns](https://github.com/danstarns) on the [@neo4j/graphql](https://github.com/neo4j/graphql) team for some very helpful advice.
 
 [//]: # ( ns__custom_end APIIntro )
 

@@ -20,4 +20,9 @@ export const {mockResultsFromCapturedOutput} = require('./custom/results/mockRes
 export const {mockResultsFromData} = require('./custom/results/mockResultsFromData')
 
 export const {testQuerySet} = require('./custom/session/testQuerySet')
+export const {mockDriver} = require('./custom/driver/mockDriver')
+
+// utilities
+export const {getDatabaseInfo} = require('./custom/database/getDatabaseInfo')
+
 /* ns__custom_end export */

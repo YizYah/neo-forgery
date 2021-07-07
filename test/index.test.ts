@@ -3,12 +3,17 @@
 import test from 'ava';
 /* ns__custom_start customImports */
 const indexFile = require( '../src/index' )
+import { mockDriver } from '../src/custom/driver/mockDriver';
 
 const mockSessionFromQuerySet = require('../src/custom/session/mockSessionFromQuerySet')
 const mockSessionFromFunction = require('../src/custom/session/mockSessionFromFunction')
 const {mockResultsFromCapturedOutput} = require('../src/custom/results/mockResultsFromCapturedOutput')
 const {mockResultsFromData} = require('../src/custom/results/mockResultsFromData')
 const {testQuerySet} = require('../src/custom/session/testQuerySet')
+
+// utilities
+const {getDatabaseInfo} = require('../src/custom/database/getDatabaseInfo')
+
 /* ns__custom_end customImports */
 
 
@@ -39,5 +44,16 @@ test('general', t => {
       testQuerySet,
       indexFile.testQuerySet
   )
+
+  t.deepEqual(
+    mockDriver,
+    indexFile.mockDriver
+  )
+
+  t.deepEqual(
+    getDatabaseInfo,
+    indexFile.getDatabaseInfo
+  )
+
 });
 /* ns__custom_end general */

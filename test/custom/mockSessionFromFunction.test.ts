@@ -1,10 +1,10 @@
 import test from 'ava'
 const mockSessionFromFunction = require("../../src/custom/session/mockSessionFromFunction")
 import {sampleRecordList} from "./data/sampleRecordList";
-import {mockResultsFromData} from "../../src/custom/results/mockResultsFromData";
+import {dataToLive} from "../../src/custom/response/dataToLive";
 
 const sessionRunMock = (query: string, params: any) => {
-    return mockResultsFromData(sampleRecordList);
+    return dataToLive(sampleRecordList);
 };
 
 test('mockSessionFromFunction', t => {

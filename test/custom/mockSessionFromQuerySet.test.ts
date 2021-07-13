@@ -2,9 +2,11 @@ import test from 'ava'
 
 const mockSessionFromQuerySet = require("../../src/custom/session/mockSessionFromQuerySet")
 import {QuerySpec} from "../../src/custom/types/QuerySpec";
-import {mockResultsFromCapturedOutput} from "../../src/custom/results/mockResultsFromCapturedOutput";
+import { storedToLive } from '../../src/custom/response/storedToLive';
+import { StoredResponse } from '../../src/custom/types/StoredResponse';
+// import {mockResultsFromCapturedOutput} from "../../src/custom/response/mockResultsFromCapturedOutput";
 
-const expectedOutput = {
+const expectedOutput:StoredResponse = {
     records:
         [
             {
@@ -73,13 +75,13 @@ const querySet: QuerySpec[] = [
 test('mockSessionFromQuerySet returns correct output', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(query, params)
-    t.deepEqual(output,mockResultsFromCapturedOutput(expectedOutput))
+    t.deepEqual(output,storedToLive(expectedOutput))
 })
 
 test('mockSessionFromQuerySet takes no params', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(noParamsQuery)
-    t.deepEqual(output,mockResultsFromCapturedOutput(expectedOutput2))
+    t.deepEqual(output,storedToLive(expectedOutput2))
 })
 
 

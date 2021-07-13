@@ -1,5 +1,5 @@
 import test from 'ava'
-import {instanciateRecord} from "../../src/custom/records/instanciateRecord";
+import {dataObjectToLiveRecord} from "../../src/custom/recordConversion/dataObjectToLiveRecord";
 
 // import { Record } from 'neo4j-driver';
 
@@ -14,7 +14,7 @@ const sampleRecord = {
 
 
 test('instanciateRecord', t => {
-    const record = instanciateRecord(sampleRecord)
+    const record = dataObjectToLiveRecord(sampleRecord)
     t.is(record.get('value'), 'kurakudesuu')
 
 })

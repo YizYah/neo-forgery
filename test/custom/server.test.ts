@@ -1,4 +1,3 @@
-import { mockResultsFromCapturedOutput } from '../../src/custom/results/mockResultsFromCapturedOutput';
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { ApolloServer } from 'apollo-server';
 import { mockDriver } from '../../src/custom/driver/mockDriver';
@@ -7,6 +6,7 @@ import { cypherParams, movieOutputWithoutReleased, movieParams } from './data/he
 import { querySet } from './data/helpers/serverQuerySet';
 import { getDatabaseInfo } from '../../src/custom/database/getDatabaseInfo';
 import Driver from 'neo4j-driver-core/types/driver';
+import { storedToLive } from '../../src/custom/response/storedToLive';
 
 require('dotenv').config();
 const test = require('ava');
@@ -108,7 +108,7 @@ test('spoof simple server', async (t: any) => {
   t.deepEqual(
     // @ts-ignore
     result.data.getMovies,
-    mockResultsFromCapturedOutput(movieOutputWithoutReleased)
+    storedToLive(movieOutputWithoutReleased)
       .records.map(record => record.get('movie').properties),
   );
 });
@@ -135,7 +135,7 @@ test('spoof simple server with db credentials', async (t: any) => {
   t.deepEqual(
     // @ts-ignore
     result.data.getMovies,
-    mockResultsFromCapturedOutput(movieOutputWithoutReleased)
+    storedToLive(movieOutputWithoutReleased)
       .records.map(record => record.get('movie').properties),
   );
 });

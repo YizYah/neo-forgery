@@ -136,7 +136,7 @@ To mock a query, simply:
 
 You can pass your mock session into code that requires a session.
 
-An alternative to `mockResultsFromCapturedOutput` is `mockResultsFromData`, which takes as input an array of objects containing record values.  That can be useful if you know what data you want, and did not copy the Results from the data browser or from a `console.log` statement.
+An alternative to `mockResultsFromCapturedOutput` is `dataToStored`, which takes as input an array of objects containing record values.  That can be useful if you know what data you want, and did not copy the Results from the data browser or from a `console.log` statement.
 
 ## <a name="key-functions"></a>:key: Functions
 ### Mock Results Generation
@@ -148,7 +148,7 @@ function mockResultsFromCapturedOutput(sampleOutput: MockOutput)
 You can pass in results from a query as captured by a `console.log` statement, or based on results from the neo4j data browser.
 
 ```
-mockResultsFromData(sampleResults: object[])
+dataToStored(sampleResults: object[])
 ```
 You can pass in an array of objects expected and it returns the mock results.
 

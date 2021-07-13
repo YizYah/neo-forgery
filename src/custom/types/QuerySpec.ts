@@ -1,4 +1,4 @@
-import {MockOutput} from "./MockOutput";
+import {StoredResponse} from "./StoredResponse";
 
 interface ParamSet {
     [param: string]: any;
@@ -7,6 +7,6 @@ interface ParamSet {
 export interface QuerySpec {
     name?: string;
     query: string;
-    output: MockOutput;
+    output: StoredResponse;
     params?: ParamSet;
 }

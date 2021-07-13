@@ -1,5 +1,5 @@
 import test from 'ava'
-import {instanciateRecordFromSampleOutput} from "../../src/custom/records/instanciateRecordFromSampleOutput";
+import {storedRecordToLive} from "../../src/custom/recordConversion/storedRecordToLive";
 const {sampleResult} = require('./data/sampleResult')
 // import { Record } from 'neo4j-driver';
 
@@ -7,7 +7,7 @@ const {records} = sampleResult;
 const sampleRecord = records[0]
 
 test('instanciateRecord', t => {
-    const record = instanciateRecordFromSampleOutput(sampleRecord)
+    const record = storedRecordToLive(sampleRecord)
     t.is(record.get('nodes').foo, 'bar')
 
 })

@@ -1,4 +1,6 @@
-export const expectedResultForMovieQuery = {
+import { StoredResponse } from '../../../src';
+
+export const expectedResultForMovieQuery: StoredResponse = {
     "records": [{
         "keys": ["movie"],
         "length": 1,
@@ -48,7 +50,7 @@ export const expectedResultForMovieQuery = {
         }],
         "_fieldLookup": {"movie": 0}
     }],
-    "summary": {
+    summary: {
         "query": {
             "text": "MATCH (movie:Movie)\\n WHERE toLower(movie.title) CONTAINS $query\\n RETURN movie",
             "parameters": {"query": "matrix"}
@@ -94,7 +96,7 @@ export const expectedResultForMovieQuery = {
     }
 }
 
-export const expectedResultsForTitleQuery = {
+export const expectedResultsForTitleQuery: StoredResponse = {
     "records": [{
         "keys": ["title", "cast"],
         "length": 2,

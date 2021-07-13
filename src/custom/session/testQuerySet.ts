@@ -1,7 +1,8 @@
 import {QuerySpec} from "../types/QuerySpec";
 import {DatabaseInfo} from "../types/DatabaseInfo";
 import {Session} from "neo4j-driver";
-
+import { storedToLive } from '../response/storedToLive';
+const deepEqual = require('deep-equal')
 const getSession = require('../database/getSession')
 
 export async function testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo) {
@@ -23,13 +24,23 @@ export async function testQuerySet(querySet: QuerySpec[], databaseInfo: Database
             )
 
         } catch (error) {
-            throw new Error(`error running query '${name? name : query}': ${error}`)
+            throw new Error(`error running query '${
+                name? 
+                  name : 
+                  query
+            }': ${error}`)
         }
 
-        if (JSON.stringify(returnValue.records) !== JSON.stringify(output.records)) {
+        if (!deepEqual(returnValue.records, storedToLive(output).records)) {
             let queryName = name
             if (!name) queryName = query
-            throw new Error(`query '${queryName}' is failing! returned this: ${JSON.stringify(returnValue)}`)
+            throw new Error(`query '${queryName}' is failing! returned this: 
+---------------------
+returned=${JSON.stringify(returnValue.records)}
+---------------------
+expectedRecords=${JSON.stringify(output.records)}
+---------------------
+`)
         }
     }
     return 'success'

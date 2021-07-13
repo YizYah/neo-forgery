@@ -1,6 +1,6 @@
 import { QuerySpec } from '../types/QuerySpec';
 import Session from 'neo4j-driver-core/types/session';
-import { mockResultsFromCapturedOutput } from '../results/mockResultsFromCapturedOutput';
+import { storedToLive } from '../response/storedToLive';
 
 const neo4j = require('neo4j-driver');
 const mockDatabaseInfo = {
@@ -27,7 +27,7 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
       if (querySpec.query.trim() === query.trim()) {
         queryMatched = true;
         if (JSON.stringify(querySpec.params) === JSON.stringify(params)) {
-          output = mockResultsFromCapturedOutput(querySpec.output);
+          output = storedToLive(querySpec.output);
         }
       }
     });

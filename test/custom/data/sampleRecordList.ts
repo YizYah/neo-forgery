@@ -1,7 +1,7 @@
 export const sampleRecordList = [{
     "userClass": "customer",
     "firstName": "clark",
-    "lastName": "candia",
+    "lastName": "cravis",
     "id": "1c34b1f0-91c8-4bf8-9ce3-6dbfad72e0d5",
     "email": "clarkcandia@outlook.com",
     "value": "kurakudesuu"
@@ -10,35 +10,35 @@ export const sampleRecordList = [{
     "firstName": "test",
     "lastName": "user",
     "id": "bd131c97-0fbe-4b2c-9e17-8ad0303abd78",
-    "email": "reallokdeveloper@gmail.com",
+    "email": "reaeloper@gmail.com",
     "value": "test-user-123"
 }, {
     "userClass": "customer",
     "firstName": "y",
     "lastName": "j",
     "id": "f92d5ac7-9d03-410e-bd66-ef1ec2aa08e6",
-    "email": "yyakovson613@gmail.com",
+    "email": "yyak@gmail.com",
     "value": "secondTry"
 }, {
     "userClass": "customer",
     "firstName": "red",
     "lastName": "blue",
     "id": "1e43425c-2d49-4be0-8a74-409be15c00ab",
-    "email": "rlj613+fds@gmail.com",
+    "email": "rfds@gmail.com",
     "value": "gggoee"
 }, {
     "userClass": "customer",
     "firstName": "yisroel",
     "lastName": "j",
     "id": "ee69062c-abfb-4f0d-aa7c-68cae22bd53d",
-    "email": "rlj613@gmail.com",
+    "email": "rlj@gmail.com",
     "value": "yyak"
 }, {
     "userClass": "customer",
     "firstName": "Bruth",
     "lastName": "Kim",
     "id": "cb918800-c4c1-4c12-9947-192a3c363087",
-    "email": "gao.guanglin@yandex.com",
+    "email": "gao@yandex.com",
     "value": "venus713"
 }, {
     "userClass": "customer",

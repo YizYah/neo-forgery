@@ -46,7 +46,7 @@ the easy way to mock a neo4j-driver session.
 * [:clipboard: Why](#clipboard-why)
 * [:white_check_mark: What](#white_check_mark-what)
 * [:wrench: Usage](#wrench-usage)
-* [:symbols: Formats for Query Responses](#formats)
+* [:symbols: Formats for Query Responses](#symbols-formats-for-query-responses)
 * [:key:Functions](#key-functions)
 * [:paperclip: Data Types](#paperclip-data-types)
 * [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
@@ -138,16 +138,17 @@ You can pass your mock session into code that requires a session.
 
 An alternative is `dataToStored`, which takes as input an array of objects containing record values.  That can be useful if you know what data you want, and did not copy the Results from the data browser or from a `console.log` statement.
 
-## <a name="formats"></a> :symbols: Formats for Query Responses
+## <a name="symbols-formats-for-query-responses"></a> :symbols: Formats for Query Responses
 The actual responses to queries differ from the stored ones in that the response include object class instances rather than simple jsons.  In addition, what gets returned from GraphQL shows pure data, which differs in some ways from even the stored format for queries.
 
 Therefore, it is important to understand that when you want to deep-compare a query result to a stored expected result you must convert one of them to be in the same format as the other.  Also, you may want to store a pure data representation of a query and to compare it with actual results.  Therefore, neo-forgery maintains three formats for query results, and provides conversion functions among them:
 
 1. **stored** a json representing a response. Looks identical to a console.log of an actual response.
 2. **live** the object returned from an actual query, including instances of the `Record` class.  Also represents integers as instances of the `Integer` class.
-3. **data** simple objects, like what GraphQl Returns.  Roughly what you see in the neo4j data browser results when you select the `TABLE` view.
+3. **data** simple objects, like what GraphQl Returns.  Roughly what you see in the neo4j data browser results when you select the `TABLE` view.  
+  
 
-![](images/resultFormats.png)
+![resultformats](images/diagram.png)
 
 
 To convert from format `A` to `B` from the list of 3 above, you call `AToB`, e.g. using AVA you might have this: 

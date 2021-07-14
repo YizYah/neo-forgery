@@ -2,7 +2,7 @@
   "name": "neo-forgery",
   "description": "the easy way to mock a neo4j-driver session",
   "author": "YizYah",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "bugs": "https://github.com/YizYah/neo-forgery/issues",
   "engines": {
     "node": ">=8.0.0"

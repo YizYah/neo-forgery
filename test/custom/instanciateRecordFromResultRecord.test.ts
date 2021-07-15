@@ -1,5 +1,5 @@
 import test from 'ava'
-import {storedRecordToLive} from "../../src/custom/recordConversion/storedRecordToLive";
+import {storedRecordToLive} from "../../src/custom/recordConversion/single/storedRecordToLive";
 const {sampleResult} = require('./data/sampleResult')
 // import { Record } from 'neo4j-driver';
 

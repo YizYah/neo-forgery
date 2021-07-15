@@ -1,5 +1,5 @@
 import test from 'ava'
-import {dataObjectToLiveRecord} from "../../src/custom/recordConversion/dataObjectToLiveRecord";
+import {dataObjectToLiveRecord} from "../../src/custom/recordConversion/single/dataObjectToLiveRecord";
 
 // import { Record } from 'neo4j-driver';
 

@@ -1,4 +1,4 @@
-import {dataObjectToLiveRecord} from "./dataObjectToLiveRecord";
+import {dataObjectToLiveRecord} from "../single/dataObjectToLiveRecord";
 import { Record } from 'neo4j-driver-core';
 
 // const Record = require('neo4j-driver').types.Record ;

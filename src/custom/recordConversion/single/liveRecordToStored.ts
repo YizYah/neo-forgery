@@ -1,4 +1,4 @@
-import { StoredRecord } from '../types/StoredRecord';
+import { StoredRecord } from '../../types/StoredRecord';
 import { Record } from 'neo4j-driver-core';
 
 export function liveRecordToStored(liveRecord: Record): StoredRecord {

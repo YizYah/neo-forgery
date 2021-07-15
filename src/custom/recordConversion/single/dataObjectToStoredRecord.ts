@@ -1,6 +1,6 @@
-import { StoredRecord } from '../types/StoredRecord';
+import { StoredRecord } from '../../types/StoredRecord';
 import traverse = require('traverse');
-import { neo4jIntDataToStored } from '../neo4jInts/neo4jIntDataToStored';
+import { neo4jIntDataToStored } from '../../neo4jInts/neo4jIntDataToStored';
 
 export function dataObjectToStoredRecord(dataObject: any): StoredRecord {
     const keys = Object.keys(dataObject)

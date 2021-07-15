@@ -1,5 +1,5 @@
 import test from 'ava'
-import {dataToLiveRecords} from "../../src/custom/recordConversion/dataToLiveRecords";
+import {dataToLiveRecords} from "../../src/custom/recordConversion/array/dataToLiveRecords";
 import {sampleRecordList} from "./data/sampleRecordList";
 
 test('data to records', t => {

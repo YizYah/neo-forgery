@@ -1,5 +1,5 @@
 import { StoredResponse } from '../types/StoredResponse';
-import { dataToStoredRecords } from '../recordConversion/dataToStoredRecords';
+import { dataToStoredRecords } from '../recordConversion/array/dataToStoredRecords';
 
 export function dataToStored(data: object[]): StoredResponse {
     const records = dataToStoredRecords(data)

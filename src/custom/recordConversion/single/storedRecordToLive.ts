@@ -1,4 +1,4 @@
-import {StoredRecord} from "../types/StoredRecord";
+import {StoredRecord} from "../../types/StoredRecord";
 // const Record = require('neo4j-driver').types.Record ;
 import { Record } from 'neo4j-driver-core';
 

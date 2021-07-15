@@ -1,5 +1,5 @@
-import { StoredRecord } from '../..';
-import { neo4jIntStoredToData } from '../neo4jInts/neo4jIntStoredToData';
+import { StoredRecord } from '../../../index';
+import { neo4jIntStoredToData } from '../../neo4jInts/neo4jIntStoredToData';
 import traverse = require('traverse');
 
 export function storedRecordToData(storedRecord: StoredRecord): object {

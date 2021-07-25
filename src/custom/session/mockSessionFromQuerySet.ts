@@ -9,6 +9,28 @@ const mockDatabaseInfo = {
   PASSWORD: 'thisIsAfakeDatabase',
 };
 
+
+const queryInfo = (params: any, query: string): string => {
+  let paramsString = JSON.stringify(params);
+  const MAX_LENGTH = 150;
+  if (paramsString.length > MAX_LENGTH) paramsString = paramsString.substring(0, MAX_LENGTH) + '...';
+  return  `
+query:
+-----------------
+${query.trim()}
+-----------------   
+params: ${paramsString}
+`
+
+}
+const errorMessageContentsQueryMatched = (params: any, query: string): string =>
+  `your query was matched in your QuerySpec. But your params were not matched:
+${queryInfo(params, query)}`;
+const errorMessageContentsQueryNotMatched = (params: any, query: string): string =>
+  `the query set provided does not contain the given query:
+${queryInfo(params, query)}`;
+
+
 function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
   const driver = neo4j.driver(
     mockDatabaseInfo.URI,
@@ -33,26 +55,15 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
     });
 
     if (output !== '') return output;
+    const errorMessageMatchedQuery = errorMessageContentsQueryMatched(params, query);
     if (queryMatched) {
-      let paramsString = JSON.stringify(params)
-      const MAX_LENGTH = 150
-      if (paramsString.length > MAX_LENGTH) paramsString = paramsString.substring(0, MAX_LENGTH) + '...'
-      throw new Error(`your query was matched in your QuerySpec. But your params were not matched.
-
-query:
------------------
-${query.trim()}
------------------   
-params: ${paramsString}
-   
-   `)
+      console.log(errorMessageMatchedQuery)
+      throw new Error(errorMessageMatchedQuery)
     }
 
-    throw new Error(`the query set provided does not contain the given query:
------------------
-${query.trim()}
------------------   
-`);
+    const errorMessageNoMatchedQuery = errorMessageContentsQueryNotMatched(params, query)
+    console.log(errorMessageNoMatchedQuery)
+    throw new Error(errorMessageNoMatchedQuery);
   };
 
   const mockBeginTransaction = () => {

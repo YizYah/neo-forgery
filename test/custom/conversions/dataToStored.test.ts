@@ -4,5 +4,6 @@ import { dataToStored } from '../../../src/custom/response/dataToStored';
 
 test('dataToStored', t => {
   const results = dataToStored(dataResponse);
-  t.deepEqual(results, storedResponse);
+  t.deepEqual(results.records, storedResponse.records);
+  t.deepEqual(results.summary, {});
 });

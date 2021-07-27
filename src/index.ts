@@ -28,6 +28,7 @@ export const {storedToLive} = require('./custom/response/storedToLive')
 export const {storedToData} = require('./custom/response/storedToData')
 export const {liveToStored} = require('./custom/response/liveToStored')
 export const {liveToData} = require('./custom/response/liveToData')
+export const {wrapCopiedResults} = require('./custom/response/wrapCopiedResults')
 
 
 // utilities

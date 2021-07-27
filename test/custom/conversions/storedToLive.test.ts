@@ -4,6 +4,7 @@ import { storedToLive } from '../../../src/custom/response/storedToLive';
 
 test('storedToLive', t => {
     const results = storedToLive(storedResponse)
+    t.deepEqual(results.summary, storedResponse.summary)
     t.is(results.records[0].get('app').properties.value, 'value1')
     t.is(results.records[1].get('app').properties.id, 'id2')
 

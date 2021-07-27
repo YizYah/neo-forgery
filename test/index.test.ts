@@ -11,12 +11,13 @@ const {mockResultsFromData} = require('../src/custom/response/dataToLive')
 const {testQuerySet} = require('../src/custom/session/testQuerySet')
 
 // conversions
-export const {dataToLive} = require('../src/custom/response/dataToLive')
-export const {dataToStored} = require('../src/custom/response/dataToStored')
-export const {storedToLive} = require('../src/custom/response/storedToLive')
-export const {storedToData} = require('../src/custom/response/storedToData')
-export const {liveToStored} = require('../src/custom/response/liveToStored')
-export const {liveToData} = require('../src/custom/response/liveToData')
+const {dataToLive} = require('../src/custom/response/dataToLive')
+const {dataToStored} = require('../src/custom/response/dataToStored')
+const {storedToLive} = require('../src/custom/response/storedToLive')
+const {storedToData} = require('../src/custom/response/storedToData')
+const {liveToStored} = require('../src/custom/response/liveToStored')
+const {liveToData} = require('../src/custom/response/liveToData')
+const {wrapCopiedResults} = require('../src/custom/response/wrapCopiedResults')
 
 
 // utilities
@@ -53,6 +54,10 @@ test('conversion functions available', t => {
   t.deepEqual(
     storedToData,
     indexFile.storedToData
+  )
+  t.deepEqual(
+    wrapCopiedResults,
+    indexFile.wrapCopiedResults
   )
 
 })

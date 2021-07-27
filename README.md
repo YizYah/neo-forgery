@@ -94,11 +94,11 @@ To mock a query, simply:
     }
     ```
 
-2. copy and store the output as a const, e.g.:
+2. copy and store the output as a const using the `wrapCopiedResults()` helper function, e.g.:
     ```
-    const sampleOutput = {
-      'records': [{ ... } ... ]
-    }
+    import {wrapCopiedResults} from 'neo-forgery'
+    
+    const sampleOutput = wrapCopiedResults: [{ ... } ... ]
     ```
 3. Create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 
@@ -260,6 +260,29 @@ As detailed [above](#formats), here are the functions for converting results to 
 * `storedToLive(storedResponse: StoredResponse): LiveResponse`
 * `liveToStored(liveResponse: LiveResponse): StoredResponse`
 * `liveToData(liveResponse: LiveResponse): object[]`
+
+Note that there is metadata in a `LiveResonse`, which has the key `summary`.  The metadata is lost if you call `storedToData` or `liveToData`. 
+
+An additional function that is helpful when you copy from the neo4j data browser is
+ ```
+wrapCopiedResults(copiedResponse: StoredRecord[], copiedSummary: any): StoredResponse
+```
+It simply generates the proper stored format for a response, using the records("Response") and optional metadata("Summary") copied from the `CODE` options:
+
+![](images/Neo4jBrowserCodeOptions.png)
+
+Usually, you probably won't need the summary.  But, if you happen to need a stat such as `nodesDeleted` you can copy the summary as well.  
+
+Here's a sample usage when all you need is the records: 
+```
+const expectedOutput = wrapCopiedResults(<Response array of records copied from the browser>)
+```
+
+Here's an example of a needed summary usage (say you deleted nodes, so you have no resulting records returned):
+```
+const expectedOutput = wrapCopiedResults([], <Summary object copied from the browser>)
+
+```
 
 ### getDatabaseInfo
 If you like, you can make the database info for a driver the real info for your database.  Doing so will not affect the performance of the mock driver, but the data in the driver instance will show the real database info.

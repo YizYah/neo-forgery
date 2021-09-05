@@ -1,6 +1,7 @@
 import { QuerySpec } from '../types/QuerySpec';
 import Session from 'neo4j-driver-core/types/session';
 import { storedToLive } from '../response/storedToLive';
+const isSubset = require('is-subset');
 
 const neo4j = require('neo4j-driver');
 const mockDatabaseInfo = {
@@ -12,9 +13,9 @@ const mockDatabaseInfo = {
 
 const queryInfo = (params: any, query: string): string => {
   let paramsString = JSON.stringify(params);
-  const MAX_LENGTH = 150;
-  if (paramsString.length > MAX_LENGTH) paramsString = paramsString.substring(0, MAX_LENGTH) + '...';
-  return  `
+  const MAX_LENGTH = 1500;
+  if (paramsString && paramsString.length > MAX_LENGTH) paramsString = paramsString.substring(0, MAX_LENGTH) + '...';
+  return `
 query:
 -----------------
 ${query.trim()}
@@ -48,7 +49,7 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
     querySet.map((querySpec: QuerySpec) => {
       if (querySpec.query.trim() === query.trim()) {
         queryMatched = true;
-        if (JSON.stringify(querySpec.params) === JSON.stringify(params)) {
+        if (!querySpec.params || isSubset(params, querySpec.params)) { // was:  JSON.stringify(querySpec.params) === JSON.stringify(params)
           output = storedToLive(querySpec.output);
         }
       }

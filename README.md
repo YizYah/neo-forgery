@@ -62,7 +62,7 @@ I couldn't find any other straightforward way to mock the neo4j driver during un
 # <a name="white_check_mark-what"></a>:white_check_mark: What
 A mock session generator for neo4j.  You set up a mock neo4j session by specifying an array of query spec objects.  Each query spec object contains a query string, param set, and expected response.
 
-You can then pass in your session as a parameter to a function to test instead of a real session. It works for both running queries directly (`session.run(...)`) and transactions (`session.readTransaction()` and `session.writeTransaction()`). You also can generate a mock driver, build your server using it rather than the real driver, and mock all of the queries in the server.
+You can then pass in your mock session as a parameter to a function to test instead of a real session. It works for both running queries directly (`session.run(...)`) and transactions (`session.readTransaction()` and `session.writeTransaction()`). You also can generate a mock driver, build your server using it rather than the real driver, and mock all of the queries in the server.
 
 There is also a function to test a query set against the live database, not intended for unit tests.  That way, whenever you change your database you can confirm that the queries in your mock session are all still working!
 

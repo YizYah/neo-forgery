@@ -50,7 +50,7 @@ the easy way to mock a neo4j-driver session.
 * [:key:Functions](#key-functions)
 * [:paperclip: Data Types](#paperclip-data-types)
 * [:heavy_exclamation_mark: Limits](#heavy_exclamation_mark-limits)
-* [:blue_book: Tutorial](#blue_book-tutorial)
+* [:blue_book: Tutorials](#blue_book-tutorials)
 * [:thumbsup: Credits](#thumbsup-credits)
 <!-- tocstop -->
 
@@ -389,8 +389,10 @@ But `neo-forgery` is new, and there still are things that it should be able to d
 2. The optional `config` parameter for a `Session.run()` is not supported currently. Much of the config may be irrelevant to unit testing, so that will probably be implemented only as requested.
 3. See the [note about integers](#a-note-about-integers) above.
 
-# <a name="blue_book-tutorial"></a>:blue_book: Tutorial
-Check out this [tutorial to create a project and test](https://medium.com/neo4j/how-to-mock-neo4j-calls-in-node-7066c52ac468).
+# <a name="blue_book-tutorials"></a>:blue_book: Tutorials
+A great way to start is with the tutorials.
+* Start with the [tutorial to create a project and test](https://medium.com/neo4j/how-to-mock-neo4j-calls-in-node-7066c52ac468).
+* Here's a more advanced [tutorial to create a full apollo server](https://medium.com/neo4j/create-a-typescript-apollo-server-and-live-database-with-unit-tests-4ab14ac46654).
 
 
 # <a name="thumbsup-credits"></a>:thumbsup: Credits

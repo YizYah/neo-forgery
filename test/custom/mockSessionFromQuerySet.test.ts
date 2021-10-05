@@ -4,6 +4,7 @@ const mockSessionFromQuerySet = require("../../src/custom/session/mockSessionFro
 import { QuerySpec } from "../../src/custom/types/QuerySpec";
 import { storedToLive } from '../../src/custom/response/storedToLive';
 import { StoredResponse } from '../../src/custom/types/StoredResponse';
+import { stripUpdates } from './data/stripUpdates';
 // import {mockResultsFromCapturedOutput} from "../../src/custom/response/mockResultsFromCapturedOutput";
 
 const expectedOutput: StoredResponse = {
@@ -75,19 +76,20 @@ const querySet: QuerySpec[] = [
 test('mockSessionFromQuerySet returns correct output', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(query, params)
-    t.deepEqual(output, storedToLive(expectedOutput))
+    t.deepEqual(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
 })
 
 test('mockSessionFromQuerySet returns correct output even with extra params', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(query, { 'boo': 'bar', 'extra': 'should be ignored' })
-    t.deepEqual(output, storedToLive(expectedOutput))
+    t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
 })
 
 test('mockSessionFromQuerySet takes no params', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(noParamsQuery)
-    t.deepEqual(output, storedToLive(expectedOutput2))
+    t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput2)) )
+    // t.like(output, storedToLive(expectedOutput2))
 })
 
 
@@ -141,7 +143,6 @@ b : to mimic in sport or derision followed the old man along the street mocking 
     const error = await t.throwsAsync(async () => {
         const output = await session.run(query, longParams)
     });
-    console.log(error.message)
     // t.regex(error.message, /does not contain the given query and params/);
     t.regex(error.message, /to treat with contempt or ridicule/);
     t.regex(error.message, /\.\.\./);

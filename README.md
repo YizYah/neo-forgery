@@ -144,7 +144,7 @@ The actual responses to queries differ from the stored ones in that the response
 Therefore, it is important to understand that when you want to deep-compare a query result to a stored expected result you must convert one of them to be in the same format as the other.  Also, you may want to store a pure data representation of a query and to compare it with actual results.  Therefore, neo-forgery maintains three formats for query results, and provides conversion functions among them:
 
 1. **stored** a json representing a response. Looks identical to a console.log of an actual response.
-2. **live** the object returned from an actual query, including instances of the `Record` class.  Also represents integers as instances of the `Integer` class.
+2. **live** the object returned from an actual query, including instances of the `Record` class.  Also represents integers as instances of the `Integer` class. One further difference, added for compatibility with @neo4j/graphql 2, is that a placeholder method `summary.counters.updates() is added to a live results object.
 3. **data** simple objects, like what GraphQl Returns.  Roughly what you see in the neo4j data browser results when you select the `TABLE` view.  
   
 

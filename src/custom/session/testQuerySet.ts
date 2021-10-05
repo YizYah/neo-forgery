@@ -12,13 +12,11 @@ export async function testQuerySet(querySet: QuerySpec[], databaseInfo: Database
         const querySpec: QuerySpec = querySet[i]
         const {query, params, output, name} = querySpec
         let returnValue: any = []
-        // console.log(`running '${query}', params '${params}'`)
         try {
             await session.run(
                 query,
                 params).then(
                 (result: any) => {
-                    // console.log(`output from '${query}' is ${JSON.stringify(result)}`)
                     returnValue = result
                 }
             )

@@ -24,7 +24,7 @@
   "types": "lib/index.d.ts",
   "repository": "YizYah/neo-forgery",
   "scripts": {
-    "build your own ": "tsc",
+    "build": "tsc",
     "commit": "git-cz",
     "int": "ava --config int-tests.config.cjs",
     "lint": "eslint \"src/**/*.ts\"",
@@ -41,14 +41,14 @@
     "@types/traverse": "^0.6.32",
     "deep-equal": "^2.0.5",
     "is-subset": "^0.1.1",
-    "neo4j-driver": "^4.3.1",
+    "neo4j-driver": "^4.3.3",
     "neo4j-driver-core": "^4.3.1",
     "path": "^0.12.7",
     "traverse": "^0.6.6",
     "tslib": "^2.0.3"
   },
   "devDependencies": {
-    "@neo4j/graphql": "^1.1.0",
+    "@neo4j/graphql": "^2.2.0",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
     "apollo-server": "^2.25.2",

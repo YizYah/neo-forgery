@@ -12,7 +12,6 @@ test('neo4jIntStoredToLive', (t:any) => {
   }];
 
   const result = traverse(tree).map(neo4jIntStoredToLive);
-  console.log(`result[0] = ${JSON.stringify(result[0], null, 2)}`)
   // this tests the conversion of the neo4j int
   t.is(result[0].identity.low, 4499)
   t.is(result[0].identity.high, 0)

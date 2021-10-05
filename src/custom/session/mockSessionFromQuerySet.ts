@@ -58,12 +58,10 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
     if (output !== '') return output;
     const errorMessageMatchedQuery = errorMessageContentsQueryMatched(params, query);
     if (queryMatched) {
-      console.log(errorMessageMatchedQuery)
       throw new Error(errorMessageMatchedQuery)
     }
 
     const errorMessageNoMatchedQuery = errorMessageContentsQueryNotMatched(params, query)
-    console.log(errorMessageNoMatchedQuery)
     throw new Error(errorMessageNoMatchedQuery);
   };
 

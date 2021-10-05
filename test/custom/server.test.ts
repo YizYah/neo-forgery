@@ -8,7 +8,6 @@ import { getDatabaseInfo } from '../../src/custom/database/getDatabaseInfo';
 import Driver from 'neo4j-driver-core/types/driver';
 import { storedToLive } from '../../src/custom/response/storedToLive';
 
-require('dotenv').config();
 const test = require('ava');
 
 const user = {
@@ -117,9 +116,9 @@ test('spoof simple server', async (t: any) => {
 test('spoof simple server with db credentials', async (t: any) => {
   const session = mockSessionFromQuerySet(querySet);
   const databaseInfo = getDatabaseInfo(
-    process.env.URI,
-    process.env.USER_NAME,
-    process.env.PASSWORD,
+    'neo4j+s://77777777.databases.neo4j.io',
+    'neo4j',
+    'letMeIn!123',
   );
   const driver = mockDriver(session, databaseInfo);
   const context = getContext(driver);
@@ -128,8 +127,7 @@ test('spoof simple server with db credentials', async (t: any) => {
     query: MOVIES,
     variables: movieParams,
   });
-  // console.log(`movieOutput.records=${JSON.stringify(movieOutput.records)}`);
-  // console.log(`mockResultsFromCapturedOutput(movieOutput).records=${JSON.stringify(mockResultsFromCapturedOutput(movieOutput).records)}`);
+
   t.true(!result.errors);
 
   t.deepEqual(

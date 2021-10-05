@@ -84,13 +84,21 @@ export const movieOutputWithoutReleased = {
   ]
 }
 
-const movieQueryWithoutReleased = `
+// const movieQueryWithoutReleased = `
 
-                WITH apoc.cypher.runFirstColumn("match (movie:Movie {title:$title}) return movie", {auth: $auth, cypherParams: $cypherParams, title: $title}, true) as x
-                UNWIND x as this
+//                 WITH apoc.cypher.runFirstColumn("match (movie:Movie {title:$title}) return movie", {auth: $auth, cypherParams: $cypherParams, title: $title}, true) as x
+//                 UNWIND x as this
             
-RETURN this { .title } AS this
-`
+// RETURN this { .title } AS this
+// `
+
+const movieQueryWithoutReleased = `WITH apoc.cypher.runFirstColumn("match (movie:Movie {title:$title}) return movie", {auth: $auth, cypherParams: $cypherParams, title: $title}, true) as x
+                UNWIND x as this
+                WITH this
+            
+
+RETURN this { .title } AS this`
+
 
 
 export const querySet: QuerySpec[] = [

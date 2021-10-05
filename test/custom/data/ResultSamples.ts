@@ -90,7 +90,7 @@ export const storedResponse = {
         'relationshipsCreated': 0,
         'relationshipsDeleted': 0,
       },
-      '_systemUpdates': 0,
+      '_systemUpdates': 1,
     },
     'updateStatistics': {
       '_stats': {

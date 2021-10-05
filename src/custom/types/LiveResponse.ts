@@ -5,5 +5,5 @@ import { Record } from 'neo4j-driver-core';
 
 export interface LiveResponse {
   records: Record[];
-  summary?: object;
+  summary?: any;
 }

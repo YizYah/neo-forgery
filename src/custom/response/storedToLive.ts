@@ -17,10 +17,6 @@ export function storedToLive(storedResponse: StoredResponse): LiveResponse {
 
     if (storedResponse.summary) updateStatistics = { ...storedResponse.summary.updateStatistics }
 
-    // if (!returned.hasOwnProperty('summary')) {
-    //     returned.summary = {}
-    // }
-
     if (!returned.summary.hasOwnProperty('counters')) {
         returned.summary.counters = {
         }

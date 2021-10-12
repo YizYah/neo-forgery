@@ -131,7 +131,7 @@ test('spoof simple server with db credentials', async (t: any) => {
   );
 });
 
-test.skip('spoof simple server deletion', async (t: any) => {
+test('spoof simple server deletion', async (t: any) => {
   const session = mockSessionFromQuerySet(querySet);
   const driver = mockDriver(session);
   const context = getContext(driver);

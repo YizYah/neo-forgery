@@ -55,6 +55,8 @@ const expectedOutput2 = {
 }
 const query = 'foo'
 const noParamsQuery = 'noparams'
+const whiteSpaceQuery = '  \nwhite  \r   space   '
+const lessWhiteSpace = 'white space'
 const params = { 'boo': 'bar' }
 const querySet: QuerySpec[] = [
     {
@@ -71,6 +73,10 @@ const querySet: QuerySpec[] = [
         query: noParamsQuery,
         output: expectedOutput2,
     },
+    {
+        query: whiteSpaceQuery,
+        output: expectedOutput,
+    },
 ]
 
 test('mockSessionFromQuerySet returns correct output', async t => {
@@ -84,6 +90,13 @@ test('mockSessionFromQuerySet returns correct output even with extra params', as
     const output = await session.run(query, { 'boo': 'bar', 'extra': 'should be ignored' })
     t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
 })
+
+test('mockSessionFromQuerySet extra white space', async t => {
+    const session = mockSessionFromQuerySet(querySet)
+    const output = await session.run(lessWhiteSpace, { 'boo': 'bar', 'extra': 'should be ignored' })
+    t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
+})
+
 
 test('mockSessionFromQuerySet takes no params', async t => {
     const session = mockSessionFromQuerySet(querySet)

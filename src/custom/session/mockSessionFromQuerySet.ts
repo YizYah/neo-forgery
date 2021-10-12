@@ -31,6 +31,10 @@ const errorMessageContentsQueryNotMatched = (params: any, query: string): string
   `the query set provided does not contain the given query:
 ${queryInfo(params, query)}`;
 
+function removeExtraWhite(inString:string):string {
+  return inString.trim().replace(/\s+/g, ' ') 
+}
+
 
 function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
   const driver = neo4j.driver(
@@ -43,11 +47,12 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
 
 
   const fakeSession = driver.session();
+
   const mockRun = async (query: string, params: any) => {
     let queryMatched = false;
     let output: any = '';
     querySet.map((querySpec: QuerySpec) => {
-      if (querySpec.query.trim() === query.trim()) {
+      if (removeExtraWhite(querySpec.query) === removeExtraWhite(query)) {
         queryMatched = true;
         if (!querySpec.params || isSubset(params, querySpec.params)) { // was:  JSON.stringify(querySpec.params) === JSON.stringify(params)
           output = storedToLive(querySpec.output);

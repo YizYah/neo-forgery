@@ -115,6 +115,7 @@ test('spoof simple server', async (t: any) => {
 
 test('spoof simple server with db credentials', async (t: any) => {
   const session = mockSessionFromQuerySet(querySet);
+  
   const databaseInfo = getDatabaseInfo(
     'neo4j+s://77777777.databases.neo4j.io',
     'neo4j',

@@ -211,8 +211,33 @@ const resultSample2 = [
   },
 ];
 
-const dataSample2 = [
-  { id: '283bc67c-b1b9-4a57-9377-6823f39b8b5b', value: 'Sample for Yisroel' },
-  { id: 'eca6861f-6f9f-4ba1-bee6-3a7904956325', value: 'Sample for Yisroel' },
-  { id: '7603d148-cf5d-4d8c-a6b2-f4dad4c3f69e', value: 'Sample for Yisroel' },
-];
+
+export const storedResponseNoSummary= {
+  records: [
+    {
+      'keys': [
+        'app',
+      ],
+      'length': 1,
+      '_fields': [
+        {
+          'identity': {
+            'low': 4499,
+            'high': 0,
+          },
+          'labels': [
+            'App',
+            'Exported',
+          ],
+          'properties': {
+            'value': 'value1',
+            'id': 'id1',
+          },
+        },
+      ],
+      '_fieldLookup': {
+        'app': 0,
+      },
+    },
+  ]
+} 

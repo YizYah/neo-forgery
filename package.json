@@ -26,6 +26,7 @@
   "scripts": {
     "build": "tsc",
     "commit": "git-cz",
+    "coverage": "nyc npm test",
     "int": "ava --config int-tests.config.cjs",
     "lint": "eslint \"src/**/*.ts\"",
     "lintfix": "eslint \"src/**/*.ts\" --fix",

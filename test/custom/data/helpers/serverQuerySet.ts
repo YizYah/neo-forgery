@@ -100,6 +100,7 @@ const movieQueryWithoutReleased = `WITH apoc.cypher.runFirstColumn("match (movie
 RETURN this { .title } AS this`
 
 
+import {deletionQueryInfo} from "../../data/deleteBooks";
 
 export const querySet: QuerySpec[] = [
   {
@@ -111,5 +112,6 @@ export const querySet: QuerySpec[] = [
     query: movieQuery,
     params: movieParams,
     output: movieOutput,
-  }
+  },
+  deletionQueryInfo
 ]

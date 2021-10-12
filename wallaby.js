@@ -8,9 +8,9 @@ module.exports = function (wallaby) {
       'test/**/*.test.ts'
     ],
 
-    // env: {
-    //   type: 'node'
-    // },
+    env: {
+      type: 'node'
+    },
 
     testFramework: 'ava'
   };

@@ -31,8 +31,8 @@ const errorMessageContentsQueryNotMatched = (params: any, query: string): string
   `the query set provided does not contain the given query:
 ${queryInfo(params, query)}`;
 
-function removeExtraWhite(inString:string):string {
-  return inString.trim().replace(/\s+/g, ' ') 
+function removeExtraWhite(inString: string): string {
+  return inString.trim().replace(/\s+/g, ' ')
 }
 
 
@@ -50,17 +50,26 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
 
   const mockRun = async (query: string, params: any) => {
     let queryMatched = false;
-    let output: any = '';
-    querySet.map((querySpec: QuerySpec) => {
+    // querySet.map((querySpec: QuerySpec) => {
+    //   if (removeExtraWhite(querySpec.query) === removeExtraWhite(query)) {
+    //     queryMatched = true;
+    //     if (!querySpec.params || isSubset(params, querySpec.params)) { // was:  JSON.stringify(querySpec.params) === JSON.stringify(params)
+    //       output = storedToLive(querySpec.output);
+    //     }
+    //   }
+    // });
+
+    for (let index = 0; index < querySet.length; index++) {
+      const querySpec: QuerySpec = querySet[index];
+
       if (removeExtraWhite(querySpec.query) === removeExtraWhite(query)) {
         queryMatched = true;
-        if (!querySpec.params || isSubset(params, querySpec.params)) { // was:  JSON.stringify(querySpec.params) === JSON.stringify(params)
-          output = storedToLive(querySpec.output);
+        if (!querySpec.params || isSubset(params, querySpec.params)) { 
+          return storedToLive(querySpec.output);
         }
       }
-    });
+    }
 
-    if (output !== '') return output;
     const errorMessageMatchedQuery = errorMessageContentsQueryMatched(params, query);
     if (queryMatched) {
       throw new Error(errorMessageMatchedQuery)

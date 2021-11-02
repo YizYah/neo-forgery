@@ -141,8 +141,6 @@ test('spoof simple server deletion', async (t: any) => {
     variables: DELETE_BOOKS_PARAMS,
   });
 
-  console.log(`result.errors=${JSON.stringify(result.errors, null, 2)}`);
-
   t.true(result.errors === undefined);
 
   if (!result.data) throw new Error('no results for deleteBooks')

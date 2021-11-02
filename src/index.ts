@@ -12,6 +12,7 @@ export * from './custom/types/DatabaseInfo'
 export * from './custom/types/QuerySpec'
 export * from './custom/types/StoredResponse'
 export * from './custom/types/StoredRecord'
+export * from './custom/types/LiveResponse'
 
 export const mockSessionFromQuerySet = require('./custom/session/mockSessionFromQuerySet')
 export const mockSessionFromFunction = require('./custom/session/mockSessionFromFunction')

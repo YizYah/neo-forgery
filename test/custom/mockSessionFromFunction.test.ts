@@ -1,5 +1,6 @@
 import test from 'ava'
 const mockSessionFromFunction = require("../../src/custom/session/mockSessionFromFunction")
+// import { mockSessionFromFunction} from "../../src/custom/session/mockSessionFromFunction"
 import {sampleRecordList} from "./data/sampleRecordList";
 import {dataToLive} from "../../src/custom/response/dataToLive";
 

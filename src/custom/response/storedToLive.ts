@@ -11,7 +11,6 @@ import { dataToLive } from './dataToLive';
 export function storedToLive(storedResponse: StoredResponse): LiveResponse {
     const data = storedToData(storedResponse)
     const returned = dataToLive(data)
-    
     returned.summary = {...storedResponse.summary}
     let updateStatistics:any = {}
 

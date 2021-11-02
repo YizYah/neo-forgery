@@ -50,7 +50,6 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
 
   const mockRun = async (query: string, params: any) => {
     let queryMatched = false;
-    let output: any = '';
     // querySet.map((querySpec: QuerySpec) => {
     //   if (removeExtraWhite(querySpec.query) === removeExtraWhite(query)) {
     //     queryMatched = true;

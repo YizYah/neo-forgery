@@ -53,7 +53,27 @@ const expectedOutput2 = {
             },
         ]
 }
+
+const expectedOutput3 = {
+    records:
+        [
+            {
+                "keys": [
+                    "a"
+                ],
+                "length": 1,
+                "_fields": [
+                    "aValue"
+                ],
+                "_fieldLookup": {
+                    "a": 0
+                }
+            },
+        ]
+}
+
 const query = 'foo'
+const query2 = 'foobaroo'
 const noParamsQuery = 'noparams'
 const whiteSpaceQuery = '  \nwhite  \r   space   '
 const lessWhiteSpace = 'white space'
@@ -65,9 +85,13 @@ const querySet: QuerySpec[] = [
         output: expectedOutput,
     },
     {
-        query: 'foobaroo',
+        query: query2,
         params: { x: 'y' },
         output: expectedOutput,
+    },
+    {
+        query: query2,
+        output: expectedOutput3,
     },
     {
         query: noParamsQuery,
@@ -95,6 +119,19 @@ test('mockSessionFromQuerySet extra white space', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(lessWhiteSpace, { 'boo': 'bar', 'extra': 'should be ignored' })
     t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
+})
+
+test('mockSessionFromQuerySet evaluates in order', async t => {
+    const session = mockSessionFromQuerySet(querySet)
+
+    // this will match the first query result
+    const output = await session.run(query2, { 'x': 'y'})
+    t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
+
+    // this will match the second query result
+    const output2 = await session.run(query2, { 'x': 'z'})
+    t.like(stripUpdates(output2), stripUpdates(storedToLive(expectedOutput3)))
+
 })
 
 

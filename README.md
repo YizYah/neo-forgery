@@ -472,6 +472,15 @@ A great way to start is with the tutorials.
 * Start with the [tutorial to create a project and test](https://medium.com/neo4j/how-to-mock-neo4j-calls-in-node-7066c52ac468).
 * Here's a more advanced [tutorial to create a full apollo server](https://medium.com/neo4j/create-a-typescript-apollo-server-and-live-database-with-unit-tests-4ab14ac46654).
 
+# Relevant Package
+
+This package is used by [neo-forte](https://www.npmjs.com/package/neo-forte).  The two complement each other well. The goal of `neo-forte` is to make running your cypher queries in code as simple as it is in a browser.
+
+Both pursue a shared mission: programming with neo4j<a href="#note1" id="note1ref"><sup>2</sup></a> should be really simple!
+
+---
+<a id="note1" href="#note1ref"><sup>2</sup></a> Or any third party service.
+
 # <a name="thumbsup-credits"></a>:thumbsup: Credits
 
 Special thanks goes to some people at [neo4j](https://neo4j.com/) for helping me with this.  

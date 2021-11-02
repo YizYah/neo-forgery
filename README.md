@@ -3,6 +3,9 @@
 
 [//]: # ( ns__custom_start beginning )
 
+<!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD041 -->
+
 [//]: # ( ns__custom_end beginning )
 
 [//]: # ( ns__start_section intro )
@@ -70,17 +73,17 @@ There is also a function to test a query set against the live database, not inte
 
 Include the package in `dev`:
 
-```
+```bash
 npm i -D neo-forgery
 ```
 
-### Mocking a Query
+## Mocking a Query
 
 To mock a query, simply:
 
 1. capture the result from the query. For instance, if you call the query in your code already with a `console.log` statement:
 
-     ```
+     ```typescript
         (result: any) => {
            console.log(`result=${JSON.stringify(result)}`)
            ...
@@ -93,7 +96,7 @@ To mock a query, simply:
 
     __*NOTE*__ If you copy from the data browser, you'll only get the `records` portion of the output.  You'll have to paste it in as a value for `records`  in an object:
 
-    ```
+    ```typescript
     {
         records: <Response>
     }
@@ -101,7 +104,7 @@ To mock a query, simply:
 
 2. copy and store the output as a const using the `wrapCopiedResults()` helper function, e.g.:
 
-    ```
+    ```typescript
     import {wrapCopiedResults} from 'neo-forgery'
     
     const sampleOutput = wrapCopiedResults: [{ ... } ... ]
@@ -109,7 +112,7 @@ To mock a query, simply:
 
 3. Create an array of `QuerySpec` and insert your query string, params, and output.  Here's an example in TypeScript using the [sample movies database](https://neo4j.com/developer/example-project/#_existing_language_driver_examples).
 
-    ```
+    ```typescript
     import {QuerySpec, mockSessionFromQuerySet} from 'neo-forgery'
     
     const querySet:QuerySpec[] = [
@@ -136,7 +139,7 @@ To mock a query, simply:
 
 4. generate a mockSession that returns it using `mockSession`.  You can then call `mockResultsFromCapturedOutput` to generate a true neo4j array of the Record type to compare the expected output to what your mock session returns.
 
-    ```
+    ```typescript
         const session = mockSessionFromQuerySet(querySet)
         const output = await session.run(query, params)
         t.deepEqual(output,storedToLive(expectedOutput))
@@ -160,7 +163,7 @@ Therefore, it is important to understand that when you want to deep-compare a qu
 
 To convert from format `A` to `B` from the list of 3 above, you call `AToB`, e.g. using AVA you might have this:
 
-```
+```typescript
 import {mockSessionFromQuerySet, storedToLive} from 'neo-forgery'
 
 const session = mockSessionFromQuerySet(querySet)
@@ -173,13 +176,13 @@ t.deepEqual(output,storedToLive(expectedOutput))
 
 ---
 
-#### A Note About Integers
+## A Note About Integers
 
 neo4j supports a greater range of integers than Javascript.  Therefore, the [neo4j-driver documentation](https://github.com/neo4j/neo4j-javascript-driver#numbers-and-the-integer-type) explains that the driver query results do not return a simple number, because then data would potentially be lost.  Instead, the driver returns a special object with `low` and `high` stored for the number. The neo-forgery conversions support that.  But your mock results __*must not use integers that exceed the safe range for Javascript*__.  That allows you anything between -(2^53 - 1) and (2^53 - 1).  In the unlikely event that real data has larger numbers, you may have to reduce them in your stored mock results.
 
 In addition, neo-forgery assumes that data with the following format represents an integer:
 
-```
+```typescript
 {
   low: <Integer Value>,
   high: 0
@@ -192,23 +195,49 @@ In the extraordinarily unlikely event that you have an object in your data that 
 
 ## <a name="key-functions"></a>:key: Functions
 
-### Mock Results Generation
-
-There are two functions for generating mock output.  These can be used for confirming that output is what you expect it to be.
-
 ### Mock Session Generation
+
+There are two functions for generating sessions that produce mock outptu.  These can be used for confirming that output is what you expect it to be.
+
+### Generation from a Query Set
 
 The main function for generating a mock session is:
 
-```
+```typescript
 mockSessionFromQuerySet
 ```
 
 You pass in a QuerySet and an instance of a neo4j `Session` is returned.
 
-But, if you need more precision, or if for whatever reason you want to create your own custom mock session, you can use this:
+Each query spec must have a `query`, which is a string.  Optionally, an object of `params` may be included.  If `params` is included, then input must contain at least the exact params specified there.
+
+Note that when the session executes, the query specs will be checked against input *in order*.  That is important, because it allows you the power to provide results for precise matches to a query, and then to provide a response to anything else by not specifying params.  
+
+For instance, here's a query set:
+
+```typescript
+const querySet: QuerySpec[] = [
+    ...
+    {
+        query: queryString,
+        params: { x: 'y' },
+        output: expectedOutput1,
+    },
+    {
+        query: queryString,
+        output: expectedOutput2,
+    },
+]
 
 ```
+
+If the params `{x: 'y'}` get passed, the result will be `expectedOutput1`, even though the query will match both query specs.
+
+### Generation from a Function
+
+If you need more precision, or if for whatever reason you want to create your own custom mock session, you can use this:
+
+```typescript
 mockSessionFromFunction(sessionRunMock: Function)
 ```
 
@@ -224,14 +253,14 @@ There are cases where you will have to generate a mock driver.  The most typical
 
 The following function can be used:
 
-```
+```typescript
 mockDriver(session: Session, databaseInfo?: DatabaseInfo)
 ```
 
 * `session` can be generated using either of the [Mock Session Generation Functions](#mock-session-generation) above.
 * You probably don't need to specify anything about a real database.  But if you want the proper info stored for the driver you can generate `databaseInfo` is generate using the utility function [getDatabaseInfo](#getdatabaseinfo), e.g.:
 
- ```
+ ```typescript
  const databaseInfo = getDatabaseInfo(
    process.env.URI,
    process.env.USER_NAME,
@@ -241,7 +270,7 @@ mockDriver(session: Session, databaseInfo?: DatabaseInfo)
 
 You can insert your `driver` into a `context` used with `ApolloServer`, e.g.:
 
-```
+```typescript
 function context({ event, context }: { event: any, context: any }): any {
   return ({
     event,
@@ -270,11 +299,11 @@ __*Note*__: when you use `@cypher` directives, the [@neo4j/graphql](https://www.
 
 Another usage of your driver is overriding `driver` in code that uses one.  You can use [proxyquire](https://www.npmjs.com/package/proxyquire) or whatever tool you'd like to stub out the definition of `driver` in your code and replace it with `mockDriver`.
   
-    ```
-    const { myUnit } = proxyquire('../src/myUnit', {
-      'neo4j-driver': { 'driver': mockDriver },
-    });
-    ```
+  ```typescript
+  const { myUnit } = proxyquire('../src/myUnit', {
+    'neo4j-driver': { 'driver': mockDriver },
+  });
+  ```
 
 ### Formatting Functions
 
@@ -291,25 +320,25 @@ Note that there is metadata in a `LiveResonse`, which has the key `summary`.  Th
 
 An additional function that is helpful when you copy from the neo4j data browser is
 
- ```
+ ```typescript
 wrapCopiedResults(copiedResponse: StoredRecord[], copiedSummary: any): StoredResponse
 ```
 
 It simply generates the proper stored format for a response, using the records("Response") and optional metadata("Summary") copied from the `CODE` options:
 
-![](images/Neo4jBrowserCodeOptions.png)
+![browser session](images/Neo4jBrowserCodeOptions.png)
 
 Usually, you probably won't need the summary.  But, if you happen to need a stat such as `nodesDeleted` you can copy the summary as well.  
 
 Here's a sample usage when all you need is the records:
 
-```
+```typescript
 const expectedOutput = wrapCopiedResults(<Response array of records copied from the browser>)
 ```
 
 Here's an example of a needed summary usage (say you deleted nodes, so you have no resulting records returned):
 
-```
+```typescript
 const expectedOutput = wrapCopiedResults([], <Summary object copied from the browser>)
 
 ```
@@ -318,7 +347,7 @@ const expectedOutput = wrapCopiedResults([], <Summary object copied from the bro
 
 If you like, you can make the database info for a driver the real info for your database.  Doing so will not affect the performance of the mock driver, but the data in the driver instance will show the real database info.
 
-```
+```typescript
 export function getDatabaseInfo(
   uri?: string,
   user?: string,
@@ -331,7 +360,7 @@ You can insert the information that you need.  Usually you won't need it.
 
 Here's an example usage based upon an `.env` file:
 
-```
+```typescript
 require('dotenv').config();
 import { getDatabaseInfo } from 'neo-forgery';
 
@@ -346,7 +375,7 @@ const databaseInfo = getDatabaseInfo(
 
 One last function is
 
-```
+```typescript
 testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
 ```
 
@@ -360,7 +389,7 @@ There are some interfaces that you can import into your TypeScript project.
 
 You must use a DatabaseInfo type for specifying the database that you want to use for running [testQuerySet](#checking-the-validity-of-your-mocked-queries).
 
-```
+```typescript
 interface DatabaseInfo {
   URI: string;
   USER: string;
@@ -373,7 +402,7 @@ interface DatabaseInfo {
 
 The output from a query is specified via a `MockOutput` instance:
 
-```
+```typescript
 interface MockOutput {
     records: SampleOutputRecord[];
     summary?: any;
@@ -386,7 +415,7 @@ Normally, you won't need to worry about the details for that.  You can just capt
 
 A query set is an instance of `QuerySpec[]`:
 
-```
+```typescript
 export interface QuerySpec {
     name?: string;
     query: string;
@@ -401,7 +430,7 @@ The `neo-forgery` package is build based on the premise that unit tests must be 
 
 To solve that problem, `neo-forgery` exports a function:
 
-```
+```typescript
 async function testQuerySet(querySet: QuerySpec[], databaseInfo: DatabaseInfo)
 ```
 
@@ -409,7 +438,7 @@ You can pass in your set of queries along with the information needed for a data
 
 For example:
 
-```
+```typescript
 import { DatabaseInfo, testQuerySet } from 'neo-forgery'
 const moviesDatabaseInfo: DatabaseInfo = {
   URI: 'neo4j+s://demo.neo4jlabs.com',

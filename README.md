@@ -197,7 +197,7 @@ In the extraordinarily unlikely event that you have an object in your data that 
 
 ### Mock Session Generation
 
-There are two functions for generating sessions that produce mock outptu.  These can be used for confirming that output is what you expect it to be.
+There are two functions for generating sessions that produce mock output.  These can be used for confirming that output is what you expect it to be.
 
 ### Generation from a Query Set
 
@@ -246,6 +246,32 @@ Pass in a Function and a session is generated.
 The `sessionRunMock` function should have as parameters `(query: string, params: any)`, and should normally return mock results.  You can use the result conversion functions `dataToLive` and `storedToLive` for the returned values.  You can also vary the output from the function based upon the query and params received.
 
 In theory, you could create a session which emulates your entire database for all of the queries in your tests, and simply reuse the mock session in all of your tests.  Note that you can also throw errors if you are testing for them.
+
+### Testing Transactions
+
+Transactions can be called in your test as easily as directly calling `.run()`.
+
+For instance:
+
+```typescript
+  const session = mockSessionFromQuerySet(querySet)
+  const output: any = await session.readTransaction((tx: any) =>
+      tx.run(query, params))
+  // assert that output is expected
+```
+
+If you want to ensure that a particular transaction type was executed, you can look at `summary.transactionType` in the output.  The value of `transactionType` will be either `READ` or `WRITE`.
+
+For instance:
+
+```typescript
+  const session = mockSessionFromFunction(sessionRunMock)
+
+  const output: any = await session.writeTransaction((tx: any) =>
+      tx.run('', { foo: "bar" }))
+
+  t.is(output.summary.transactionType, 'WRITE')
+```
 
 ### Mock Driver Generation
 

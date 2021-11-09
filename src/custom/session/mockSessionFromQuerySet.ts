@@ -50,21 +50,13 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
 
   const mockRun = async (query: string, params: any) => {
     let queryMatched = false;
-    // querySet.map((querySpec: QuerySpec) => {
-    //   if (removeExtraWhite(querySpec.query) === removeExtraWhite(query)) {
-    //     queryMatched = true;
-    //     if (!querySpec.params || isSubset(params, querySpec.params)) { // was:  JSON.stringify(querySpec.params) === JSON.stringify(params)
-    //       output = storedToLive(querySpec.output);
-    //     }
-    //   }
-    // });
 
     for (let index = 0; index < querySet.length; index++) {
       const querySpec: QuerySpec = querySet[index];
 
       if (removeExtraWhite(querySpec.query) === removeExtraWhite(query)) {
         queryMatched = true;
-        if (!querySpec.params || isSubset(params, querySpec.params)) { 
+        if (!querySpec.params || isSubset(params, querySpec.params)) {
           return storedToLive(querySpec.output);
         }
       }
@@ -79,10 +71,14 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
     throw new Error(errorMessageNoMatchedQuery);
   };
 
-  const mockBeginTransaction = () => {
+  fakeSession._beginTransaction = function mockBeginTransaction(transactionType: string) {
     let _isOpen = true;
     return {
-      run: mockRun,
+      run: async (query: string, params: any) => {
+        const output = await mockRun(query, params)
+        output.summary.transactionType = transactionType
+        return output
+      },
       commit: () => {
         _isOpen = false;
         return Promise.resolve();
@@ -93,10 +89,10 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
       },
       isOpen: () => _isOpen,
     };
-  };
+  }
 
   fakeSession.run = mockRun;
-  fakeSession._beginTransaction = mockBeginTransaction;
+  // fakeSession._beginTransaction = mockBeginTransaction;
 
   return fakeSession;
 }

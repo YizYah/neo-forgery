@@ -1,8 +1,8 @@
 import test from 'ava'
 const mockSessionFromFunction = require("../../src/custom/session/mockSessionFromFunction")
 // import { mockSessionFromFunction} from "../../src/custom/session/mockSessionFromFunction"
-import {sampleRecordList} from "./data/sampleRecordList";
-import {dataToLive} from "../../src/custom/response/dataToLive";
+import { sampleRecordList } from "./data/sampleRecordList";
+import { dataToLive } from "../../src/custom/response/dataToLive";
 
 const sessionRunMock = (query: string, params: any) => {
     return dataToLive(sampleRecordList);
@@ -11,13 +11,23 @@ const sessionRunMock = (query: string, params: any) => {
 test('mockSessionFromFunction', t => {
     const session = mockSessionFromFunction(sessionRunMock)
     t.is(session.run, sessionRunMock)
-    t.not(session.run, ()=>{return 1})
+    t.not(session.run, () => { return 1 })
 })
+
+test('mockSessionFromFunction works with transacation', async t => {
+    const session = mockSessionFromFunction(sessionRunMock)
+
+    const output: any = await session.writeTransaction((tx: any) =>
+        tx.run('', { foo: "bar" }))
+
+    t.is(output.summary.transactionType, 'WRITE')
+})
+
 
 test('mockSessionFromFunction with transacation', async t => {
     const session = mockSessionFromFunction(sessionRunMock)
     const tx = session._beginTransaction()
-    t.is(tx.run, sessionRunMock)
+    // t.is(tx.run, sessionRunMock)
     t.is(tx.isOpen(), true)
     t.is(await tx.rollback(), await Promise.resolve())
     t.is(await tx.commit(), await Promise.resolve())

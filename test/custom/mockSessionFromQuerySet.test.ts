@@ -72,6 +72,40 @@ const expectedOutput3 = {
         ]
 }
 
+const expectedOutput4: StoredResponse = {
+    records:
+        [
+            {
+                "keys": [
+                    "role"
+                ],
+                "length": 1,
+                "_fields": [
+                    "Moderator"
+                ],
+                "_fieldLookup": {
+                    "role": 0
+                }
+            },
+            {
+                "keys": [
+                    "role"
+                ],
+                "length": 1,
+                "_fields": [
+                    "customer"
+                ],
+                "_fieldLookup": {
+                    "role": 0
+                }
+            }
+        ],
+    summary: {
+        transactionType: 'READ'
+    }
+}
+
+
 const query = 'foo'
 const query2 = 'foobaroo'
 const noParamsQuery = 'noparams'
@@ -109,6 +143,15 @@ test('mockSessionFromQuerySet returns correct output', async t => {
     t.deepEqual(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
 })
 
+
+test('mockSessionFromQuerySet works called with transaction', async t => {
+    const session = mockSessionFromQuerySet(querySet)
+    const output: any = await session.readTransaction((tx: any) =>
+        tx.run(query, params))
+
+    t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput4)))
+})
+
 test('mockSessionFromQuerySet returns correct output even with extra params', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(query, { 'boo': 'bar', 'extra': 'should be ignored' })
@@ -125,11 +168,11 @@ test('mockSessionFromQuerySet evaluates in order', async t => {
     const session = mockSessionFromQuerySet(querySet)
 
     // this will match the first query result
-    const output = await session.run(query2, { 'x': 'y'})
+    const output = await session.run(query2, { 'x': 'y' })
     t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput)))
 
     // this will match the second query result
-    const output2 = await session.run(query2, { 'x': 'z'})
+    const output2 = await session.run(query2, { 'x': 'z' })
     t.like(stripUpdates(output2), stripUpdates(storedToLive(expectedOutput3)))
 
 })
@@ -138,7 +181,7 @@ test('mockSessionFromQuerySet evaluates in order', async t => {
 test('mockSessionFromQuerySet takes no params', async t => {
     const session = mockSessionFromQuerySet(querySet)
     const output = await session.run(noParamsQuery)
-    t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput2)) )
+    t.like(stripUpdates(output), stripUpdates(storedToLive(expectedOutput2)))
     // t.like(output, storedToLive(expectedOutput2))
 })
 

@@ -19,10 +19,15 @@ export function mockSessionFromFunction(mockRun: Function): Session {
     const fakeSession = driver.session()
     fakeSession.run = mockRun
 
-    const mockBeginTransaction = () => {
+
+    const mockBeginTransaction = (transactionType: string) => {
         let _isOpen = true;
         return {
-            run: mockRun,
+            run: async (query: string, params: any) => {
+                const output = await mockRun(query, params)
+                output.summary.transactionType = transactionType
+                return output
+            },
             commit: () => {
                 _isOpen = false;
                 return Promise.resolve()

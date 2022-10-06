@@ -42,7 +42,9 @@ function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
     neo4j.auth.basic(
       mockDatabaseInfo.USER,
       mockDatabaseInfo.PASSWORD,
-    ),
+    ), {
+      disableLosslessIntegers: true,
+    }
   );
 
 

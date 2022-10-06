@@ -14,7 +14,9 @@ export function mockSessionFromFunction(mockRun: Function): Session {
         neo4j.auth.basic(
             mockDatabaseInfo.USER,
             mockDatabaseInfo.PASSWORD
-        )
+        ), {
+            disableLosslessIntegers: true,
+          }
     )
     const fakeSession = driver.session()
     fakeSession.run = mockRun

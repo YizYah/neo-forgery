@@ -1,3 +1,4 @@
+import { Config } from 'neo4j-driver';
 import Session from 'neo4j-driver-core/types/session';
 
 const neo4j = require('neo4j-driver');
@@ -8,15 +9,13 @@ const mockDatabaseInfo = {
     PASSWORD: 'thisIsAfakeDatabase',
 };
 
-export function mockSessionFromFunction(mockRun: Function): Session {
+export function mockSessionFromFunction(mockRun: Function, config?: Config): Session {
     const driver = neo4j.driver(
         mockDatabaseInfo.URI,
         neo4j.auth.basic(
             mockDatabaseInfo.USER,
             mockDatabaseInfo.PASSWORD
-        ), {
-            disableLosslessIntegers: true,
-          }
+        ), config
     )
     const fakeSession = driver.session()
     fakeSession.run = mockRun

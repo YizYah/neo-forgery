@@ -1,6 +1,7 @@
 import { QuerySpec } from '../types/QuerySpec';
 import Session from 'neo4j-driver-core/types/session';
 import { storedToLive } from '../response/storedToLive';
+import { Config } from 'neo4j-driver';
 const isSubset = require('is-subset');
 
 const neo4j = require('neo4j-driver');
@@ -36,13 +37,13 @@ function removeExtraWhite(inString: string): string {
 }
 
 
-function mockSessionFromQuerySet(querySet: QuerySpec[]): Session {
+function mockSessionFromQuerySet(querySet: QuerySpec[], config?: Config): Session {
   const driver = neo4j.driver(
     mockDatabaseInfo.URI,
     neo4j.auth.basic(
       mockDatabaseInfo.USER,
       mockDatabaseInfo.PASSWORD,
-    ),
+    ), config
   );
 
 

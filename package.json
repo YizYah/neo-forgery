@@ -29,7 +29,7 @@
     "coverage": "nyc npm test",
     "int": "ava --config int-tests.config.cjs",
     "lint": "eslint \"src/**/*.ts\"",
-    "lintfix": "eslint \"src/**/*.ts\" --fix",
+    "lint-fix": "eslint \"src/**/*.ts\" --fix",
     "test": "ava",
     "fulltest": "npm run view-coverage && npm run report && npm run lint",
     "prepack": "rm -rf lib && tsc -b",

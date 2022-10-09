@@ -515,6 +515,8 @@ Special thanks goes to some people at [neo4j](https://neo4j.com/) for helping me
 
 :thumbsup: Thanks also to [Darrell Warde](https://github.com/darrellwarde) and [Dan Starns](https://github.com/danstarns) on the [@neo4j/graphql](https://github.com/neo4j/graphql) team for some very helpful advice.
 
+:thumbsup: Thanks to [dilanormisiar](https://github.com/dilanormisiar) for adding the `config` to `createMockSessions`.
+
 [//]: # ( ns__custom_end APIIntro )
 
 [//]: # ( ns__custom_start constantsIntro )

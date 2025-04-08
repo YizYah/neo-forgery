@@ -1,6 +1,5 @@
 import test from 'ava'
-
-const mockSessionFromQuerySet = require("../../src/custom/session/mockSessionFromQuerySet")
+import { mockSessionFromQuerySet } from "../../src/custom/session/mockSessionFromQuerySet"
 import { QuerySpec } from "../../src/custom/types/QuerySpec";
 import { storedToLive } from '../../src/custom/response/storedToLive';
 import { StoredResponse } from '../../src/custom/types/StoredResponse';
@@ -186,14 +185,17 @@ test('mockSessionFromQuerySet takes no params', async t => {
 })
 
 
-test('mockSessionFromQuerySet returns error with false input', async (t) => {
+test('mockSessionFromQuerySet returns error with false input', async t => {
+    const querySet = [{
+        query: 'foo',
+        params: { bar: 'baz' },
+        output: { records: [] }
+    }]
     const session = mockSessionFromQuerySet(querySet)
-
     const error = await t.throwsAsync(async () => {
-        const output = await session.run(query, ['bar', 'baz'])
-    });
-    // t.regex(error.message, /does not contain the given query and params/);
-    t.regex(error.message, /your params were not matched./);
+        await session.run('foo', ['bar', 'baz'])
+    })
+    t.regex(error.message, /Query matched but params did not match/);
 })
 
 

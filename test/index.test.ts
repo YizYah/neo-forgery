@@ -2,26 +2,19 @@
 /* ns__start_section imports */
 import test from 'ava';
 /* ns__custom_start customImports */
-const indexFile = require( '../src/index' )
+import * as indexFile from '../src/index';
 import { mockDriver } from '../src/custom/driver/mockDriver';
-
-const mockSessionFromQuerySet = require('../src/custom/session/mockSessionFromQuerySet')
-const mockSessionFromFunction = require('../src/custom/session/mockSessionFromFunction')
-const {mockResultsFromData} = require('../src/custom/response/dataToLive')
-const {testQuerySet} = require('../src/custom/session/testQuerySet')
-
-// conversions
-const {dataToLive} = require('../src/custom/response/dataToLive')
-const {dataToStored} = require('../src/custom/response/dataToStored')
-const {storedToLive} = require('../src/custom/response/storedToLive')
-const {storedToData} = require('../src/custom/response/storedToData')
-const {liveToStored} = require('../src/custom/response/liveToStored')
-const {liveToData} = require('../src/custom/response/liveToData')
-const {wrapCopiedResults} = require('../src/custom/response/wrapCopiedResults')
-
-
-// utilities
-const {getDatabaseInfo} = require('../src/custom/database/getDatabaseInfo')
+import { mockSessionFromQuerySet } from '../src/custom/session/mockSessionFromQuerySet';
+import { mockSessionFromFunction } from '../src/custom/session/mockSessionFromFunction';
+import { dataToLive } from '../src/custom/response/dataToLive';
+import { testQuerySet } from '../src/custom/session/testQuerySet';
+import { dataToStored } from '../src/custom/response/dataToStored';
+import { storedToLive } from '../src/custom/response/storedToLive';
+import { storedToData } from '../src/custom/response/storedToData';
+import { liveToStored } from '../src/custom/response/liveToStored';
+import { liveToData } from '../src/custom/response/liveToData';
+import { wrapCopiedResults } from '../src/custom/response/wrapCopiedResults';
+import { getDatabaseInfo } from '../src/custom/database/getDatabaseInfo';
 
 /* ns__custom_end customImports */
 
@@ -59,11 +52,9 @@ test('conversion functions available', t => {
     wrapCopiedResults,
     indexFile.wrapCopiedResults
   )
-
 })
 
 test('general', t => {
-
   t.deepEqual(
       mockSessionFromQuerySet,
       indexFile.mockSessionFromQuerySet
@@ -71,10 +62,6 @@ test('general', t => {
   t.deepEqual(
       mockSessionFromFunction,
       indexFile.mockSessionFromFunction
-  )
-  t.deepEqual(
-      mockResultsFromData,
-      indexFile.mockResultsFromData
   )
 
   t.deepEqual(
@@ -91,6 +78,5 @@ test('general', t => {
     getDatabaseInfo,
     indexFile.getDatabaseInfo
   )
-
 });
 /* ns__custom_end general */

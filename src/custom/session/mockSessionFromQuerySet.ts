@@ -1,7 +1,6 @@
 import { QuerySpec } from '../types/QuerySpec';
-import Session from 'neo4j-driver-core/types/session';
+import { Session, Config, Transaction } from 'neo4j-driver';
 import { storedToLive } from '../response/storedToLive';
-import { Config } from 'neo4j-driver';
 const isSubset = require('is-subset');
 
 const neo4j = require('neo4j-driver');
@@ -10,7 +9,6 @@ const mockDatabaseInfo = {
   USER: 'faker',
   PASSWORD: 'thisIsAfakeDatabase',
 };
-
 
 const queryInfo = (params: any, query: string): string => {
   let paramsString = JSON.stringify(params);
@@ -23,21 +21,21 @@ ${query.trim()}
 -----------------   
 params: ${paramsString}
 `
-
-}
-const errorMessageContentsQueryMatched = (params: any, query: string): string =>
-  `your query was matched in your QuerySpec. But your params were not matched:
-${queryInfo(params, query)}`;
-const errorMessageContentsQueryNotMatched = (params: any, query: string): string =>
-  `the query set provided does not contain the given query:
-${queryInfo(params, query)}`;
-
-function removeExtraWhite(inString: string): string {
-  return inString.trim().replace(/\s+/g, ' ')
 }
 
+function removeExtraWhite(str: string) {
+  return str.replace(/\s+/g, ' ').trim();
+}
 
-function mockSessionFromQuerySet(querySet: QuerySpec[], config?: Config): Session {
+function errorMessageContentsQueryMatched(params: any, query: string) {
+  return `Query matched but params did not match. ${queryInfo(params, query)}`;
+}
+
+function errorMessageContentsQueryNotMatched(params: any, query: string) {
+  return `No matching query found. ${queryInfo(params, query)}`;
+}
+
+export function mockSessionFromQuerySet(querySet: QuerySpec[], config?: Config): Session {
   const driver = neo4j.driver(
     mockDatabaseInfo.URI,
     neo4j.auth.basic(
@@ -45,7 +43,6 @@ function mockSessionFromQuerySet(querySet: QuerySpec[], config?: Config): Sessio
       mockDatabaseInfo.PASSWORD,
     ), config
   );
-
 
   const fakeSession = driver.session();
 
@@ -72,7 +69,7 @@ function mockSessionFromQuerySet(querySet: QuerySpec[], config?: Config): Sessio
     throw new Error(errorMessageNoMatchedQuery);
   };
 
-  fakeSession._beginTransaction = function mockBeginTransaction(transactionType: string) {
+  fakeSession._beginTransaction = function mockBeginTransaction(transactionType: string): Transaction {
     let _isOpen = true;
     return {
       run: async (query: string, params: any) => {
@@ -80,22 +77,23 @@ function mockSessionFromQuerySet(querySet: QuerySpec[], config?: Config): Sessio
         output.summary.transactionType = transactionType
         return output
       },
-      commit: () => {
+      commit: async () => {
         _isOpen = false;
         return Promise.resolve();
       },
-      rollback: () => {
+      rollback: async () => {
+        _isOpen = false;
+        return Promise.resolve();
+      },
+      close: async () => {
         _isOpen = false;
         return Promise.resolve();
       },
       isOpen: () => _isOpen,
-    };
+    } as Transaction;
   }
 
   fakeSession.run = mockRun;
-  // fakeSession._beginTransaction = mockBeginTransaction;
 
   return fakeSession;
 }
-
-module.exports = mockSessionFromQuerySet;

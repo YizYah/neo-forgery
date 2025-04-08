@@ -14,10 +14,8 @@ export * from './custom/types/StoredResponse'
 export * from './custom/types/StoredRecord'
 export * from './custom/types/LiveResponse'
 
-export const mockSessionFromQuerySet = require('./custom/session/mockSessionFromQuerySet')
-export const mockSessionFromFunction = require('./custom/session/mockSessionFromFunction')
-
-export const {mockResultsFromData} = require('./custom/response/dataToLive')
+export { mockSessionFromQuerySet } from './custom/session/mockSessionFromQuerySet'
+export { mockSessionFromFunction } from './custom/session/mockSessionFromFunction'
 
 export const {testQuerySet} = require('./custom/session/testQuerySet')
 export const {mockDriver} = require('./custom/driver/mockDriver')
@@ -30,7 +28,6 @@ export const {storedToData} = require('./custom/response/storedToData')
 export const {liveToStored} = require('./custom/response/liveToStored')
 export const {liveToData} = require('./custom/response/liveToData')
 export const {wrapCopiedResults} = require('./custom/response/wrapCopiedResults')
-
 
 // utilities
 export const {getDatabaseInfo} = require('./custom/database/getDatabaseInfo')

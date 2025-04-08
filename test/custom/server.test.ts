@@ -1,11 +1,11 @@
 import { Neo4jGraphQL } from '@neo4j/graphql';
 import { ApolloServer } from 'apollo-server';
 import { mockDriver } from '../../src/custom/driver/mockDriver';
-import { mockSessionFromQuerySet } from '../../src';
+import { mockSessionFromQuerySet } from '../../src/custom/session/mockSessionFromQuerySet';
 import { cypherParams, movieOutputWithoutReleased, movieParams } from './data/helpers/serverQuerySet';
 import { querySet } from './data/helpers/serverQuerySet';
 import { getDatabaseInfo } from '../../src/custom/database/getDatabaseInfo';
-import Driver from 'neo4j-driver-core/types/driver';
+import { Driver } from 'neo4j-driver';
 import { storedToLive } from '../../src/custom/response/storedToLive';
 import {DELETE_BOOKS_MUTATION, DELETE_BOOKS_PARAMS} from "./data/deleteBooks";
 

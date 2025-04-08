@@ -1,23 +1,23 @@
 import test from 'ava'
-const mockSessionFromFunction = require("../../src/custom/session/mockSessionFromFunction")
+import { mockSessionFromFunction } from "../../src/custom/session/mockSessionFromFunction"
 // import { mockSessionFromFunction} from "../../src/custom/session/mockSessionFromFunction"
 import { sampleRecordList } from "./data/sampleRecordList";
 import { dataToLive } from "../../src/custom/response/dataToLive";
+import { Result, Transaction, int } from 'neo4j-driver';
 
-const sessionRunMock = (query: string, params: any) => {
-    return dataToLive(sampleRecordList);
+const sessionRunMock = (query: string, parameters?: any): Result => {
+    return dataToLive(sampleRecordList) as unknown as Result;
 };
 
 test('mockSessionFromFunction', t => {
     const session = mockSessionFromFunction(sessionRunMock)
     t.is(session.run, sessionRunMock)
-    t.not(session.run, () => { return 1 })
 })
 
 test('mockSessionFromFunction works with transacation', async t => {
     const session = mockSessionFromFunction(sessionRunMock)
 
-    const output: any = await session.writeTransaction((tx: any) =>
+    const output: any = await session.writeTransaction((tx: Transaction) =>
         tx.run('', { foo: "bar" }))
 
     t.is(output.summary.transactionType, 'WRITE')
@@ -26,7 +26,11 @@ test('mockSessionFromFunction works with transacation', async t => {
 
 test('mockSessionFromFunction with transacation', async t => {
     const session = mockSessionFromFunction(sessionRunMock)
-    const tx = session._beginTransaction()
+    const tx = session._beginTransaction('READ', { 
+        timeout: int(1000),
+        metadata: {},
+        isEmpty: () => false
+    })
     // t.is(tx.run, sessionRunMock)
     t.is(tx.isOpen(), true)
     t.is(await tx.rollback(), await Promise.resolve())

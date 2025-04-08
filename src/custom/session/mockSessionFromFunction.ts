@@ -1,5 +1,4 @@
-import { Config } from 'neo4j-driver';
-import Session from 'neo4j-driver-core/types/session';
+import { Config, Session } from 'neo4j-driver';
 
 const neo4j = require('neo4j-driver');
 
@@ -19,7 +18,6 @@ export function mockSessionFromFunction(mockRun: Function, config?: Config): Ses
     )
     const fakeSession = driver.session()
     fakeSession.run = mockRun
-
 
     const mockBeginTransaction = (transactionType: string) => {
         let _isOpen = true;
@@ -44,5 +42,3 @@ export function mockSessionFromFunction(mockRun: Function, config?: Config): Ses
 
     return fakeSession
 }
-
-module.exports = mockSessionFromFunction;

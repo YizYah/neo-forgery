@@ -77,20 +77,20 @@ Include the package in `dev`:
 npm i -D neo-forgery
 ```
 
-Starting with version `2.0`, `neo-forgery` supports `neo4j-driver` **5.x and 6.x** and declares it as a **peer dependency** (`>=5 <7`). Install the driver yourself alongside neo-forgery:
+Starting with version `3.0`, `neo-forgery` supports `neo4j-driver` **5.x and 6.x** and declares it as a **peer dependency** (`>=5 <7`). Install the driver yourself alongside neo-forgery:
 
 ```bash
 npm i neo4j-driver
 ```
 
-### Upgrading from 1.x to 2.0
+### Upgrading from 2.x to 3.0
 
 * `neo4j-driver` is now a peer dependency you install yourself (see above); `neo4j-driver-core` is no longer a direct dependency.
 * Node.js `>=18` is required.
 * `session.run()` now returns a **real** neo4j-driver `Result`, so every consumption style works: `await`, `for await`, `.records`, `.keys()`, `.summary()`, `.subscribe()`, and driver-6 `.as(rules)`.
 * The mock no longer monkeypatches a real session/driver — there is no reliance on private internals (`_beginTransaction`). Transactions are driven through the public `executeRead`/`executeWrite` API (with `readTransaction`/`writeTransaction` kept as 5.x aliases).
 * `driver.executeQuery()` is now mocked and returns a real `EagerResult`.
-* Number handling in the conversion helpers is now lossless: negative integers and integers above 2^32 round-trip correctly (1.x turned `-5` into `4294967291`), non-integer numbers stay JS floats instead of being truncated to Integers (1.x turned `3.5` into `3`), and stored `{ low, high }` values convert to JS numbers whenever they fit in 2^53.
+* Number handling in the conversion helpers is now lossless: negative integers and integers above 2^32 round-trip correctly (2.x turned `-5` into `4294967291`), non-integer numbers stay JS floats instead of being truncated to Integers (2.x turned `3.5` into `3`), and stored `{ low, high }` values convert to JS numbers whenever they fit in 2^53.
 * `session.run(query)` with no params now matches a `QuerySpec` whose `params` is `{}`.
 
 ## Mocking a Query
@@ -589,7 +589,7 @@ Special thanks goes to some people at [neo4j](https://neo4j.com/) for helping me
 
 :thumbsup: Thanks to [dilanormisiar](https://github.com/dilanormisiar) for adding the `config` to `createMockSessions`.
 
-:thumbsup: Thanks to [dnorton](https://github.com/dnorton) ([PR #48](https://github.com/YizYah/neo-forgery/pull/48)) for the work bumping `neo4j-driver` past 4.x, which paved the way for the 5.x/6.x support in version 2.0.
+:thumbsup: Thanks to [dnorton](https://github.com/dnorton) ([PR #48](https://github.com/YizYah/neo-forgery/pull/48)) for the work bumping `neo4j-driver` past 4.x, which paved the way for the 5.x/6.x support in version 3.0.
 
 [//]: # ( ns__custom_end APIIntro )
 

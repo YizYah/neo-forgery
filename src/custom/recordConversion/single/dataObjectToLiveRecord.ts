@@ -1,5 +1,5 @@
 import traverse = require('traverse');
-import { Record } from 'neo4j-driver-core';
+import { Record } from 'neo4j-driver';
 import { neo4jIntDataToLive } from '../../neo4jInts/neo4jIntDataToLive';
 
 export function dataObjectToLiveRecord(dataObject: object): Record {

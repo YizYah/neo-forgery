@@ -5,17 +5,24 @@ import {
     expectedResultForMovieQuery,
     expectedResultsForTitleQuery
 } from "./data/expectedResults";
+import { testQuerySet } from '../../src/custom/session/testQuerySet'
+import { mockSessionFromQuerySet } from '../../src/custom/session/mockSessionFromQuerySet'
+import { getSession } from '../../src/custom/database/getSession'
+import * as proxyquire from 'proxyquire'
+import { Session } from 'neo4j-driver'
 
-const proxyquire = require('proxyquire')
-const getSessionStub: any = {}
+const defaultGetSession = (databaseInfo: DatabaseInfo): Session => {
+    return mockSessionFromQuerySet([]);
+};
 
-const testQuerySetModule = proxyquire('../../src/custom/session/testQuerySet', {
+const getSessionStub = {
+    getSession: defaultGetSession
+};
+
+const { testQuerySet: testQuerySetWithStub } = proxyquire('../../src/custom/session/testQuerySet', {
     '../database/getSession': getSessionStub
-})
+});
 
-
-const mockSessionFromQuerySet = require('../../src/custom/session/mockSessionFromQuerySet')
-// const {testQuerySet} = require("../../src/custom/session/testQuerySet")
 const moviesDatabaseInfo: DatabaseInfo = require('./data/moviesDatabaseInfo')
 
 const querySet: QuerySpec[] = [
@@ -39,7 +46,6 @@ const querySet: QuerySpec[] = [
     }
 ]
 
-
 const querySetNoNameForMovies: QuerySpec[] = [
     {
         query: 'MATCH (movie:Movie)' +
@@ -59,7 +65,6 @@ const querySetNoNameForMovies: QuerySpec[] = [
         output: expectedResultsForTitleQuery,
     }
 ]
-
 
 const failingQuerySet: QuerySpec[] = [
     {
@@ -82,7 +87,6 @@ const failingQuerySet: QuerySpec[] = [
     },
 ]
 
-
 const failingQuerySetNoName: QuerySpec[] = [
     {
         query: 'MATCH (movie:Movie)' +
@@ -93,36 +97,86 @@ const failingQuerySetNoName: QuerySpec[] = [
     },
 ]
 
-
 test('testQuerySet Positive Result', async t => {
-    getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
-        return mockSessionFromQuerySet(querySet)
+    const testQuerySet = [{
+        name: 'movies',
+        query: 'MATCH (movie:Movie) RETURN movie',
+        params: { title: 'The Matrix' },
+        output: {
+            records: [{
+                keys: ['movie'],
+                _fields: [{ title: 'The Matrix' }],
+                _fieldLookup: { movie: 0 }
+            }]
+        }
+    }];
+
+    getSessionStub.getSession = function(databaseInfo: DatabaseInfo): Session {
+        return mockSessionFromQuerySet(testQuerySet);
     }
-    const queriesWorking = await testQuerySetModule.testQuerySet(querySet, moviesDatabaseInfo)
-    t.is(queriesWorking, "success")
-    getSessionStub.getSession = undefined
-})
+
+    const result = await testQuerySetWithStub(testQuerySet, {
+        URI: 'neo4j+s://test.databases.neo4j.io',
+        USER: 'test',
+        PASSWORD: 'test'
+    });
+
+    t.is(result, 'success');
+    getSessionStub.getSession = defaultGetSession;
+});
 
 test('testQuerySet Negative Result', async t => {
-    getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
-        return mockSessionFromQuerySet(querySet)
+    const expectedQuerySet = [{
+        name: 'moviesBad',
+        query: 'MATCH (movie:Movie) RETURN movie',
+        params: { title: 'The Matrix' },
+        output: {
+            records: [{
+                keys: ['movie'],
+                _fields: [{ title: 'The Matrix' }],
+                _fieldLookup: { movie: 0 }
+            }]
+        }
+    }];
+
+    const mockQuerySet = [{
+        name: 'moviesBad',
+        query: 'MATCH (movie:Movie) RETURN movie',
+        params: { title: 'The Matrix' },
+        output: {
+            records: [{
+                keys: ['movie'],
+                _fields: [{ title: 'Wrong Movie' }],
+                _fieldLookup: { movie: 0 }
+            }]
+        }
+    }];
+
+    getSessionStub.getSession = function(databaseInfo: DatabaseInfo): Session {
+        return mockSessionFromQuerySet(mockQuerySet);
     }
+
     const error = await t.throwsAsync(async () => {
-        const queriesWorking = await testQuerySetModule.testQuerySet(failingQuerySet, moviesDatabaseInfo)
+        await testQuerySetWithStub(expectedQuerySet, {
+            URI: 'neo4j+s://test.databases.neo4j.io',
+            USER: 'test',
+            PASSWORD: 'test'
+        });
     });
-    t.regex(error.message, /query 'moviesBad' is failing!/);
-    getSessionStub.getSession = undefined
-})
+
+    t.regex(error.message, /query 'moviesBad' is failing! returned this:/);
+    getSessionStub.getSession = defaultGetSession;
+});
 
 test('testQuerySet Negative Result no Name', async t => {
     getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
         return mockSessionFromQuerySet(querySet)
     }
     const error = await t.throwsAsync(async () => {
-        const queriesWorking = await testQuerySetModule.testQuerySet(failingQuerySetNoName, moviesDatabaseInfo)
+        const queriesWorking = await testQuerySetWithStub(failingQuerySetNoName, moviesDatabaseInfo)
     });
     t.regex(error.message, /query 'MATCH \(movie:Movie\)/);
-    getSessionStub.getSession = undefined
+    getSessionStub.getSession = defaultGetSession;
 })
 
 test('testQuerySet Failing Execution of Query', async t => {
@@ -132,19 +186,21 @@ test('testQuerySet Failing Execution of Query', async t => {
         PASSWORD: 'bogus',
     }
 
-    getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
-        const session=mockSessionFromQuerySet(querySet)
+    const errorSession = function(databaseInfo: DatabaseInfo): Session {
+        const session = mockSessionFromQuerySet(querySet)
         session.run = function(){
             throw new Error('uh-oh')
         }
         return session
     }
 
+    getSessionStub.getSession = errorSession
+
     const error = await t.throwsAsync(async () => {
-        const queriesWorking = await testQuerySetModule.testQuerySet(querySet, erringDatabaseInfo)
+        const queriesWorking = await testQuerySetWithStub(querySet, erringDatabaseInfo)
     });
     t.regex(error.message, /error running query 'movies'/);
-    getSessionStub.getSession = undefined
+    getSessionStub.getSession = defaultGetSession;
 })
 
 test('testQuerySet Failing Execution of Query no name', async t => {
@@ -154,7 +210,7 @@ test('testQuerySet Failing Execution of Query no name', async t => {
         PASSWORD: 'bogus',
     }
 
-    getSessionStub.getSession = function(databaseInfo: DatabaseInfo){
+    const errorSession = function(databaseInfo: DatabaseInfo): Session {
         const session = mockSessionFromQuerySet(querySetNoNameForMovies)
         session.run = function(){
             throw new Error('uh-oh')
@@ -162,10 +218,12 @@ test('testQuerySet Failing Execution of Query no name', async t => {
         return session
     }
 
+    getSessionStub.getSession = errorSession
+
     const error = await t.throwsAsync(async () => {
         const queriesWorking =
-            await testQuerySetModule.testQuerySet(querySetNoNameForMovies, erringDatabaseInfo)
+            await testQuerySetWithStub(querySetNoNameForMovies, erringDatabaseInfo)
     });
     t.regex(error.message, /error running query 'MATCH \(movie:Movie\)/);
-    getSessionStub.getSession = undefined
+    getSessionStub.getSession = defaultGetSession;
 })

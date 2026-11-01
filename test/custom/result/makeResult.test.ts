@@ -83,7 +83,14 @@ test('.subscribe() replays onKeys, onNext per record, then onCompleted', async (
 });
 
 test('.as() maps rows with Rules (driver 6)', async (t) => {
-  const { records } = await run().as({
+  // `.as()` only exists on neo4j-driver 6; the suite also runs against 5.x,
+  // so look it up dynamically and skip there.
+  const result = run() as any;
+  if (typeof result.as !== 'function') {
+    t.pass('neo4j-driver 5.x has no Result.as()');
+    return;
+  }
+  const { records } = await result.as({
     name: {},
     age: { convert: (value: any) => value.toNumber() },
   });

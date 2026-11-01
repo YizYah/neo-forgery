@@ -25,5 +25,7 @@ export function paramsMatch(actual: any, expected: any): boolean {
     subsetExpected[key] = expectedValue;
   }
 
-  return isSubset(actual, subsetExpected);
+  // `session.run(query)` with no params must still satisfy an empty (or wildcard-only)
+  // expected set, so treat missing params as an empty object.
+  return isSubset(actual ?? {}, subsetExpected);
 }

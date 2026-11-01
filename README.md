@@ -90,6 +90,8 @@ npm i neo4j-driver
 * `session.run()` now returns a **real** neo4j-driver `Result`, so every consumption style works: `await`, `for await`, `.records`, `.keys()`, `.summary()`, `.subscribe()`, and driver-6 `.as(rules)`.
 * The mock no longer monkeypatches a real session/driver — there is no reliance on private internals (`_beginTransaction`). Transactions are driven through the public `executeRead`/`executeWrite` API (with `readTransaction`/`writeTransaction` kept as 5.x aliases).
 * `driver.executeQuery()` is now mocked and returns a real `EagerResult`.
+* Number handling in the conversion helpers is now lossless: negative integers and integers above 2^32 round-trip correctly (1.x turned `-5` into `4294967291`), non-integer numbers stay JS floats instead of being truncated to Integers (1.x turned `3.5` into `3`), and stored `{ low, high }` values convert to JS numbers whenever they fit in 2^53.
+* `session.run(query)` with no params now matches a `QuerySpec` whose `params` is `{}`.
 
 ## Mocking a Query
 

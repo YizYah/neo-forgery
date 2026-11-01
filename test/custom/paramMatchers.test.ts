@@ -39,3 +39,11 @@ test('anyValue skips the key whatever the actual value is', async (t) => {
   const second = await session.run(query, { id: 42 });
   t.is(second.records[0].get('p'), 'matched');
 });
+
+// A spec with an empty params object must accept a call made with no params at all.
+test('session.run without params matches a spec with params: {}', async (t) => {
+  const querySet: QuerySpec[] = [{ query, params: {}, output }];
+  const session = mockSessionFromQuerySet(querySet);
+  const result = await session.run(query);
+  t.is(result.records[0].get('p'), 'matched');
+});

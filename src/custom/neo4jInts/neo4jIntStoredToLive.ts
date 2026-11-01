@@ -8,13 +8,12 @@ export function neo4jIntStoredToLive(this: TraverseContext, item: any) {
     (typeof item === 'string') ||
     (typeof item === 'number')
   ) return;
+  // A stored Integer is exactly `{ low, high }`; any such pair becomes a neo4j Integer.
   if (
     Object.keys(item).length === 2 &&
-    item.high === 0 &&
-    item.low &&
-    (typeof item.low === 'number')
+    (typeof item.low === 'number') &&
+    (typeof item.high === 'number')
   ) {
-    const actualValue = item.low;
-    this.update(neo4j.int(actualValue));
+    this.update(neo4j.int(item));
   }
 }

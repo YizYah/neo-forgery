@@ -1,44 +1,9 @@
 import { Config, Session } from 'neo4j-driver';
+import { MockSession } from './MockSession';
+import { Runner } from '../transaction/MockTransaction';
 
-const neo4j = require('neo4j-driver');
-
-const mockDatabaseInfo = {
-    URI: 'neo4j+s://84751e18.databases.neo4j.io',
-    USER: 'faker',
-    PASSWORD: 'thisIsAfakeDatabase',
-};
-
-export function mockSessionFromFunction(mockRun: Function, config?: Config): Session {
-    const driver = neo4j.driver(
-        mockDatabaseInfo.URI,
-        neo4j.auth.basic(
-            mockDatabaseInfo.USER,
-            mockDatabaseInfo.PASSWORD
-        ), config
-    )
-    const fakeSession = driver.session()
-    fakeSession.run = mockRun
-
-    const mockBeginTransaction = (transactionType: string) => {
-        let _isOpen = true;
-        return {
-            run: async (query: string, params: any) => {
-                const output = await mockRun(query, params)
-                output.summary.transactionType = transactionType
-                return output
-            },
-            commit: () => {
-                _isOpen = false;
-                return Promise.resolve()
-            },
-            rollback: () => {
-                _isOpen = false;
-                return Promise.resolve();
-            },
-            isOpen: () => _isOpen
-        }
-    }
-    fakeSession._beginTransaction = mockBeginTransaction
-
-    return fakeSession
+// Builds a mock session whose `run` (and transaction `run`) delegate to a user-supplied
+// function. The function fully controls what each call returns, exactly as before.
+export function mockSessionFromFunction(mockRun: Runner, config?: Config): Session {
+  return new MockSession(mockRun, config) as unknown as Session;
 }

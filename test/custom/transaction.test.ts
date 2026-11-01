@@ -3,14 +3,13 @@ import test from 'ava';
 import { readQuery, readParams } from './data/queries/readQuery';
 import { writeParams, writeQuery, writeQueryFlawed } from './data/queries/writeQuery';
 import { querySet } from './data/helpers/querySet';
-import { mockSessionFromQuerySet } from '../../src/custom/session/mockSessionFromQuerySet';
-import { Transaction } from 'neo4j-driver';
+import { mockSessionFromQuerySet } from '../../src';
 
 test('transactions are mocked', async (t) => {
 
   const session = mockSessionFromQuerySet(querySet);
 
-  const writeResult = await session.writeTransaction((tx: any) =>
+  const writeResult = await (session as any).writeTransaction((tx: any) =>
     tx.run(writeQuery, writeParams),
   );
   writeResult.records.forEach((record: any) => {
@@ -21,7 +20,7 @@ test('transactions are mocked', async (t) => {
     t.is(person2Node.properties.name, 'David');
   });
 
-  const readResult = await session.readTransaction((tx: any) =>
+  const readResult = await (session as any).readTransaction((tx: any) =>
     tx.run(readQuery, readParams),
   );
   readResult.records.forEach((record: any) => {
@@ -30,18 +29,15 @@ test('transactions are mocked', async (t) => {
 });
 
 
-test('transaction rollback', async t => {
-    const session = mockSessionFromQuerySet([]);
-    const error = await t.throwsAsync(async () => {
-        await session.writeTransaction((tx: Transaction) =>
-            tx.run(
-                'MIRAGE (p1:Person { name: $person1Name })\
-                         BARRAGE (p2:Person { name: $person2Name })\
-                         HODGE_PODGE (p1)-[:KNOWS]->(p2)\
-                         RETURN p1, p2',
-                { person1Name: 'Alice', person2Name: 'David' }
-            )
-        );
-    });
-    t.regex(error.message, /No matching query found/);
+test('transaction rollback', async (t) => {
+
+  const session = mockSessionFromQuerySet(querySet);
+
+  const error = await t.throwsAsync(async () => {
+    await (session as any).writeTransaction((tx: any) =>
+      tx.run(writeQueryFlawed, writeParams));
+  });
+
+  t.regex(error.message, /the query set provided does not contain/);
+
 });

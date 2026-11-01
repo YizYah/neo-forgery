@@ -19,6 +19,8 @@ test('storedToLive', t => {
 test('storedToLive with no summary', t => {
     const results = storedToLive(storedResponseNoSummary)
 
-    // this tests the conversion of the neo4j int
-    t.is(typeof results.summary.counters.updates, 'function')
+    // With no stored summary, storedToLive now yields an empty summary (the real
+    // ResultSummary — with working counters — is built later by makeResult).
+    t.deepEqual(results.summary, {})
+    t.is(results.records[0].get('app').properties.value, 'value1')
 })

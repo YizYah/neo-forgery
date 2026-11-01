@@ -77,6 +77,22 @@ Include the package in `dev`:
 npm i -D neo-forgery
 ```
 
+Starting with version `2.0`, `neo-forgery` supports `neo4j-driver` **5.x and 6.x** and declares it as a **peer dependency** (`>=5 <7`). Install the driver yourself alongside neo-forgery:
+
+```bash
+npm i neo4j-driver
+```
+
+### Upgrading from 1.x to 2.0
+
+* `neo4j-driver` is now a peer dependency you install yourself (see above); `neo4j-driver-core` is no longer a direct dependency.
+* Node.js `>=18` is required.
+* `session.run()` now returns a **real** neo4j-driver `Result`, so every consumption style works: `await`, `for await`, `.records`, `.keys()`, `.summary()`, `.subscribe()`, and driver-6 `.as(rules)`.
+* The mock no longer monkeypatches a real session/driver — there is no reliance on private internals (`_beginTransaction`). Transactions are driven through the public `executeRead`/`executeWrite` API (with `readTransaction`/`writeTransaction` kept as 5.x aliases).
+* `driver.executeQuery()` is now mocked and returns a real `EagerResult`.
+* Number handling in the conversion helpers is now lossless: negative integers and integers above 2^32 round-trip correctly (1.x turned `-5` into `4294967291`), non-integer numbers stay JS floats instead of being truncated to Integers (1.x turned `3.5` into `3`), and stored `{ low, high }` values convert to JS numbers whenever they fit in 2^53.
+* `session.run(query)` with no params now matches a `QuerySpec` whose `params` is `{}`.
+
 ## Mocking a Query
 
 To mock a query, simply:
@@ -156,7 +172,7 @@ The actual responses to queries differ from the stored ones in that the response
 Therefore, it is important to understand that when you want to deep-compare a query result to a stored expected result you must convert one of them to be in the same format as the other.  Also, you may want to store a pure data representation of a query and to compare it with actual results.  Therefore, neo-forgery maintains three formats for query results, and provides conversion functions among them:
 
 1. **stored** a json representing a response. Looks identical to a console.log of an actual response.
-2. **live** the object returned from an actual query, including instances of the `Record` class.  Also represents integers as instances of the `Integer` class. One further difference, added for compatibility with @neo4j/graphql 2, is that a placeholder method `summary.counters.updates() is added to a live results object.
+2. **live** the object returned from an actual query, including instances of the `Record` class.  Also represents integers as instances of the `Integer` class. Since a mocked `session.run()` now returns a real `Result`, its `summary` is a genuine `ResultSummary` with working `counters.updates()` and `counters.containsUpdates()` — no placeholder shim is needed any more.
 3. **data** simple objects, like what GraphQl Returns.  Roughly what you see in the neo4j data browser results when you select the `TABLE` view.  
   
 ![resultformats](images/diagram.png)
@@ -233,6 +249,39 @@ const querySet: QuerySpec[] = [
 
 If the params `{x: 'y'}` get passed, the result will be `expectedOutput1`, even though the query will match both query specs.
 
+#### Flexible param matching
+
+A param value does not have to be a literal. For a given key you can also provide:
+
+* a **predicate** `(actual) => boolean` — the key matches when the predicate returns `true`; or
+* the exported **`anyValue`** wildcard — the key matches whatever the actual value is.
+
+```typescript
+import { anyValue, QuerySpec } from 'neo-forgery'
+
+const querySet: QuerySpec[] = [
+  {
+    query,
+    params: {
+      id: anyValue,                              // any value for `id`
+      count: (actual: number) => actual > 0,     // any positive `count`
+    },
+    output,
+  },
+]
+```
+
+### mockGetSession
+
+As a shortcut, `mockGetSession(querySet)` builds a mock driver from a query set and immediately returns a ready-to-use mock session (equivalent to `mockDriver(mockSessionFromQuerySet(querySet)).session()`):
+
+```typescript
+import { mockGetSession } from 'neo-forgery'
+
+const session = mockGetSession(querySet)
+const output = await session.run(query, params)
+```
+
 ### Generation from a Function
 
 If you need more precision, or if for whatever reason you want to create your own custom mock session, you can use this:
@@ -249,13 +298,13 @@ In theory, you could create a session which emulates your entire database for al
 
 ### Testing Transactions
 
-Transactions can be called in your test as easily as directly calling `.run()`.
+Transactions can be called in your test as easily as directly calling `.run()`. The mock session implements the driver-5/6 managed-transaction API `executeRead` / `executeWrite`, and keeps `readTransaction` / `writeTransaction` as aliases for 5.x code.
 
 For instance:
 
 ```typescript
   const session = mockSessionFromQuerySet(querySet)
-  const output: any = await session.readTransaction((tx: any) =>
+  const output: any = await session.executeRead((tx: any) =>
       tx.run(query, params))
   // assert that output is expected
 ```
@@ -267,7 +316,7 @@ For instance:
 ```typescript
   const session = mockSessionFromFunction(sessionRunMock)
 
-  const output: any = await session.writeTransaction((tx: any) =>
+  const output: any = await session.executeWrite((tx: any) =>
       tx.run('', { foo: "bar" }))
 
   t.is(output.summary.transactionType, 'WRITE')
@@ -275,12 +324,31 @@ For instance:
 
 ### Mock Driver Generation
 
-There are cases where you will have to generate a mock driver.  The most typical use case is for mocking an Apollo Server that uses the [@neo4j/graphql](https://www.npmjs.com/package/@neo4j/graphql) library.
+There are cases where you will have to generate a mock driver.  The most typical use case is for mocking a GraphQL server that uses the [@neo4j/graphql](https://www.npmjs.com/package/@neo4j/graphql) library (version 7 is supported).
 
 The following function can be used:
 
 ```typescript
 mockDriver(session: Session, databaseInfo?: DatabaseInfo)
+```
+
+The mock driver implements the public `Driver` surface, including `driver.session()`, `driver.executeQuery()` (which returns a real `EagerResult` and honours a supplied `config.resultTransformer`), `driver.close()`, `verifyConnectivity()`, and the `supports*` capability checks.
+
+With `@neo4j/graphql` 7 you build the schema with `getSchema()` and execute operations with graphql-js, passing your mock driver on the context's `executionContext` key:
+
+```typescript
+import { Neo4jGraphQL } from '@neo4j/graphql';
+import { graphql } from 'graphql';
+
+const schema = await new Neo4jGraphQL({ typeDefs }).getSchema();
+const driver = mockDriver(mockSessionFromQuerySet(querySet));
+
+const result = await graphql({
+  schema,
+  source: operation,
+  variableValues,
+  contextValue: { executionContext: driver },
+});
 ```
 
 * `session` can be generated using either of the [Mock Session Generation Functions](#mock-session-generation) above.
@@ -343,6 +411,8 @@ As detailed [above](#formats), here are the functions for converting results to 
 * `liveToData(liveResponse: LiveResponse): object[]`
 
 Note that there is metadata in a `LiveResonse`, which has the key `summary`.  The metadata is lost if you call `storedToData` or `liveToData`.
+
+`mockResultsFromData` is an exported alias of `dataToLive`, and `mockResultsFromCapturedOutput` is an alias of `mockResultsFromData` (the name used in the Neo4j blog tutorial). Both take an array of record data objects and return a `LiveResponse`.
 
 An additional function that is helpful when you copy from the neo4j data browser is
 
@@ -426,11 +496,13 @@ interface DatabaseInfo {
 
 ### Query Response Specification
 
-The output from a query is specified via a `MockOutput` instance:
+The output from a query is specified via a `StoredResponse`. The exported type `MockOutput` is an alias of `StoredResponse`:
 
 ```typescript
-interface MockOutput {
-    records: SampleOutputRecord[];
+export type MockOutput = StoredResponse;
+
+interface StoredResponse {
+    records: StoredRecord[];
     summary?: any;
 }
 ```
@@ -516,6 +588,8 @@ Special thanks goes to some people at [neo4j](https://neo4j.com/) for helping me
 :thumbsup: Thanks also to [Darrell Warde](https://github.com/darrellwarde) and [Dan Starns](https://github.com/danstarns) on the [@neo4j/graphql](https://github.com/neo4j/graphql) team for some very helpful advice.
 
 :thumbsup: Thanks to [dilanormisiar](https://github.com/dilanormisiar) for adding the `config` to `createMockSessions`.
+
+:thumbsup: Thanks to [dnorton](https://github.com/dnorton) ([PR #48](https://github.com/YizYah/neo-forgery/pull/48)) for the work bumping `neo4j-driver` past 4.x, which paved the way for the 5.x/6.x support in version 2.0.
 
 [//]: # ( ns__custom_end APIIntro )
 

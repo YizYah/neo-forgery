@@ -26,3 +26,17 @@ test('neo4jIntStoredToLive null', (t:any) => {
   t.is(result, null)
 
 });
+
+
+// issue #44: zero and negative lossless integers must convert
+test('neo4jIntStoredToLive converts zero (low:0, high:0)', (t:any) => {
+  const tree = [{ 'identity': { 'low': 0, 'high': 0 } }];
+  const result = traverse(tree).map(neo4jIntStoredToLive);
+  t.is(result[0].identity.toNumber(), 0)
+});
+
+test('neo4jIntStoredToLive converts negative (high:-1)', (t:any) => {
+  const tree = [{ 'identity': { 'low': -1, 'high': -1 } }];
+  const result = traverse(tree).map(neo4jIntStoredToLive);
+  t.is(result[0].identity.toNumber(), -1)
+});

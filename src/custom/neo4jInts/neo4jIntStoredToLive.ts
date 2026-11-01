@@ -10,11 +10,9 @@ export function neo4jIntStoredToLive(this: TraverseContext, item: any) {
   ) return;
   if (
     Object.keys(item).length === 2 &&
-    item.high === 0 &&
-    item.low &&
-    (typeof item.low === 'number')
+    (typeof item.low === 'number') &&
+    (item.high === 0 || item.high === -1)
   ) {
-    const actualValue = item.low;
-    this.update(neo4j.int(actualValue));
+    this.update(neo4j.int(item));
   }
 }

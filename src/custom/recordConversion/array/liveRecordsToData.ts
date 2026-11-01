@@ -1,4 +1,4 @@
-import { Record } from 'neo4j-driver-core';
+import { Record } from 'neo4j-driver';
 import { liveRecordToData } from '../single/liveRecordToData';
 
 export function liveRecordsToData(records: Record[]): object[] {

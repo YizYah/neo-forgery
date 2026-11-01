@@ -19,3 +19,14 @@ test('neo4jIntStoredToData', (t:any) => {
   const result = traverse(tree).map(neo4jIntStoredToData);
   t.deepEqual(result, expected)
 });
+
+// issue #44: zero and negative lossless integers must convert
+test('neo4jIntStoredToData converts zero (low:0, high:0)', (t:any) => {
+  const result = traverse([{ 'identity': { 'low': 0, 'high': 0 } }]).map(neo4jIntStoredToData);
+  t.is(result[0].identity, 0)
+});
+
+test('neo4jIntStoredToData converts negative (high:-1)', (t:any) => {
+  const result = traverse([{ 'identity': { 'low': -1, 'high': -1 } }]).map(neo4jIntStoredToData);
+  t.is(result[0].identity, -1)
+});

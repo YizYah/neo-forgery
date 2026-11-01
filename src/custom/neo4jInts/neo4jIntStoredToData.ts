@@ -1,5 +1,7 @@
 import { TraverseContext } from 'traverse';
 
+const neo4j = require('neo4j-driver');
+
 export function neo4jIntStoredToData(this: TraverseContext, item: any) {
   if (!item ||
     Array.isArray(item) ||
@@ -8,10 +10,8 @@ export function neo4jIntStoredToData(this: TraverseContext, item: any) {
   ) return;
   if (
     Object.keys(item).length === 2 &&
-    item.high === 0 &&
-    item.low &&
-    (typeof item.low === 'number')
+    (typeof item.low === 'number') &&
+    (item.high === 0 || item.high === -1)
   )
-    this.update(item.low);
+    this.update(neo4j.int(item).toNumber());
 }
-

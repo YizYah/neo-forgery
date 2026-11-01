@@ -1,117 +1,98 @@
 import { QuerySpec } from '../../../../src/custom/types/QuerySpec';
 
-// general server param constants
-export const cypherParams = { 'currentUserId': 'f5224bcb-12d7-48d3-8943-4fa862afa1ec' };
+// GraphQL type definitions exercised by the server integration test. `@neo4j/graphql` 7
+// requires the `@node` directive to treat a type as a node.
+export const typeDefs = `
+type Movie @node {
+  title: String!
+  released: Int
+}
+type Book @node {
+  title: String
+  author: String
+}
+`;
 
-export const auth = {
-  'isAuthenticated': false,
-  'roles': [],
+// The GraphQL operations the test runs.
+export const MOVIES_OPERATION = `
+query GetMovies {
+  movies {
+    title
+  }
+}
+`;
+
+export const DELETE_BOOKS_MUTATION = `
+mutation ($bookWhere: BookWhere){
+  deleteBooks(where: $bookWhere) {
+    nodesDeleted
+  }
+}
+`;
+
+export const DELETE_BOOKS_VARIABLES = {
+  bookWhere: {
+    title: { eq: 'Gatsby JS' },
+    author: { eq: 'F. Scott Fitzgerald' },
+  },
 };
 
+export const expectedMovies = [{ title: 'Forrest Gump' }];
 
-// `
-
-// specific movie query info
-export const movieQuery = `
-                WITH apoc.cypher.runFirstColumn("match (movie:Movie {title:$title}) return movie", {auth: $auth, cypherParams: $cypherParams, title: $title}, true) as x
-                UNWIND x as this
-            
-RETURN this { .title, .released } AS this
-`
-
-export const movieParams = {
-  title: "Forrest Gump",
-  auth,
-  cypherParams,
-}
-export const movieOutput = {
+// `@neo4j/graphql` 7 probes the server version before every operation; the mock answers it
+// from the query set too.
+const componentsResponse = {
   records: [
     {
-      "keys": [
-        "movie"
-      ],
-      "length": 1,
-      "_fields": [
-        {
-          "identity": {
-            "low": 32,
-            "high": 0
-          },
-          "labels": [
-            "Movie"
-          ],
-          "properties": {
-            "title": "Forrest Gump",
-            "released": {
-              "low": 1994,
-              "high": 0
-            }
-          }
-        }
-      ],
-      "_fieldLookup": {
-        "movie": 0
-      }
+      keys: ['version', 'edition'],
+      length: 2,
+      _fields: ['5.26.0', 'enterprise'],
+      _fieldLookup: { version: 0, edition: 1 },
     },
-  ]
-}
+  ],
+  summary: { queryType: 'r', counters: { _stats: {} } },
+};
 
-export const movieOutputWithoutReleased = {
-  records: [
-    {
-      "keys": [
-        "movie"
-      ],
-      "length": 1,
-      "_fields": [
-        {
-          "identity": {
-            "low": 32,
-            "high": 0
-          },
-          "labels": [
-            "Movie"
-          ],
-          "properties": {
-            "title": "Forrest Gump",
-          }
-        }
-      ],
-      "_fieldLookup": {
-        "movie": 0
-      }
-    },
-  ]
-}
-
-// const movieQueryWithoutReleased = `
-
-//                 WITH apoc.cypher.runFirstColumn("match (movie:Movie {title:$title}) return movie", {auth: $auth, cypherParams: $cypherParams, title: $title}, true) as x
-//                 UNWIND x as this
-            
-// RETURN this { .title } AS this
-// `
-
-const movieQueryWithoutReleased = `WITH apoc.cypher.runFirstColumn("match (movie:Movie {title:$title}) return movie", {auth: $auth, cypherParams: $cypherParams, title: $title}, true) as x
-                UNWIND x as this
-                WITH this
-            
-
-RETURN this { .title } AS this`
-
-
-import {deletionQueryInfo} from "../../data/deleteBooks";
-
+// The Cypher strings below are exactly what `@neo4j/graphql` 7 generates for the operations
+// above. The matcher normalises whitespace, so formatting differences are irrelevant.
 export const querySet: QuerySpec[] = [
   {
-    query: movieQueryWithoutReleased,
-    params: movieParams,
-    output: movieOutputWithoutReleased,
+    name: 'components',
+    query: `CYPHER 5
+CALL dbms.components() YIELD versions, edition UNWIND versions AS version RETURN version, edition`,
+    output: componentsResponse,
   },
   {
-    query: movieQuery,
-    params: movieParams,
-    output: movieOutput,
+    name: 'movies',
+    query: `CYPHER 5
+MATCH (this:Movie)
+RETURN this { .title } AS this`,
+    output: {
+      records: [
+        {
+          keys: ['this'],
+          length: 1,
+          _fields: [{ title: 'Forrest Gump' }],
+          _fieldLookup: { this: 0 },
+        },
+      ],
+      summary: { queryType: 'r', counters: { _stats: {} } },
+    },
   },
-  deletionQueryInfo
-]
+  {
+    name: 'deleteBooks',
+    query: `CYPHER 5
+MATCH (this:Book)
+WHERE (this.title = $param0 AND this.author = $param1)
+DETACH DELETE this`,
+    params: { param0: 'Gatsby JS', param1: 'F. Scott Fitzgerald' },
+    output: {
+      records: [],
+      summary: {
+        queryType: 'w',
+        counters: { _stats: { nodesDeleted: 1 } },
+        updateStatistics: { _stats: { nodesDeleted: 1 } },
+      },
+    },
+  },
+];

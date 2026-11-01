@@ -1,37 +1,35 @@
 import test from 'ava'
-const mockSessionFromFunction = require("../../src/custom/session/mockSessionFromFunction")
-// import { mockSessionFromFunction} from "../../src/custom/session/mockSessionFromFunction"
+import { mockSessionFromFunction } from '../../src'
 import { sampleRecordList } from "./data/sampleRecordList";
 import { dataToLive } from "../../src/custom/response/dataToLive";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const sessionRunMock = (query: string, params: any) => {
     return dataToLive(sampleRecordList);
 };
 
-test('mockSessionFromFunction', t => {
+test('mockSessionFromFunction run delegates to the supplied function', t => {
     const session = mockSessionFromFunction(sessionRunMock)
-    t.is(session.run, sessionRunMock)
-    t.not(session.run, () => { return 1 })
+    const output: any = session.run('anything', {})
+    t.deepEqual(output, dataToLive(sampleRecordList))
 })
 
-test('mockSessionFromFunction works with transacation', async t => {
+test('mockSessionFromFunction works with transaction', async t => {
     const session = mockSessionFromFunction(sessionRunMock)
 
-    const output: any = await session.writeTransaction((tx: any) =>
+    const output: any = await (session as any).writeTransaction((tx: any) =>
         tx.run('', { foo: "bar" }))
 
     t.is(output.summary.transactionType, 'WRITE')
 })
 
 
-test('mockSessionFromFunction with transacation', async t => {
+test('mockSessionFromFunction explicit transaction lifecycle', async t => {
     const session = mockSessionFromFunction(sessionRunMock)
-    const tx = session._beginTransaction()
-    // t.is(tx.run, sessionRunMock)
+    const tx = session.beginTransaction()
     t.is(tx.isOpen(), true)
     t.is(await tx.rollback(), await Promise.resolve())
     t.is(await tx.commit(), await Promise.resolve())
     t.is(await tx.commit(), await Promise.resolve())
     t.is(tx.isOpen(), false)
 })
-

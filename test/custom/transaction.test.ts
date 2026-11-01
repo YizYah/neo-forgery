@@ -9,7 +9,7 @@ test('transactions are mocked', async (t) => {
 
   const session = mockSessionFromQuerySet(querySet);
 
-  const writeResult = await session.writeTransaction((tx: any) =>
+  const writeResult = await (session as any).writeTransaction((tx: any) =>
     tx.run(writeQuery, writeParams),
   );
   writeResult.records.forEach((record: any) => {
@@ -20,7 +20,7 @@ test('transactions are mocked', async (t) => {
     t.is(person2Node.properties.name, 'David');
   });
 
-  const readResult = await session.readTransaction((tx: any) =>
+  const readResult = await (session as any).readTransaction((tx: any) =>
     tx.run(readQuery, readParams),
   );
   readResult.records.forEach((record: any) => {
@@ -34,7 +34,7 @@ test('transaction rollback', async (t) => {
   const session = mockSessionFromQuerySet(querySet);
 
   const error = await t.throwsAsync(async () => {
-    await session.writeTransaction((tx: any) =>
+    await (session as any).writeTransaction((tx: any) =>
       tx.run(writeQueryFlawed, writeParams));
   });
 

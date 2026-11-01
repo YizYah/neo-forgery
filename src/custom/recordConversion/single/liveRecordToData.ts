@@ -1,4 +1,4 @@
-import { Record } from 'neo4j-driver-core';
+import { Record } from 'neo4j-driver';
 import { storedRecordToData } from './storedRecordToData';
 import { liveRecordToStored } from './liveRecordToStored';
 

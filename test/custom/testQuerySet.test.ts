@@ -14,7 +14,7 @@ const testQuerySetModule = proxyquire('../../src/custom/session/testQuerySet', {
 })
 
 
-const mockSessionFromQuerySet = require('../../src/custom/session/mockSessionFromQuerySet')
+const { mockSessionFromQuerySet } = require('../../src/custom/session/mockSessionFromQuerySet')
 // const {testQuerySet} = require("../../src/custom/session/testQuerySet")
 const moviesDatabaseInfo: DatabaseInfo = require('./data/moviesDatabaseInfo')
 

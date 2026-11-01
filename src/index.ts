@@ -14,25 +14,26 @@ export * from './custom/types/StoredResponse'
 export * from './custom/types/StoredRecord'
 export * from './custom/types/LiveResponse'
 
-export const mockSessionFromQuerySet = require('./custom/session/mockSessionFromQuerySet')
-export const mockSessionFromFunction = require('./custom/session/mockSessionFromFunction')
+export { mockSessionFromQuerySet } from './custom/session/mockSessionFromQuerySet'
+export { mockSessionFromFunction } from './custom/session/mockSessionFromFunction'
+export { mockGetSession } from './custom/session/mockGetSession'
 
-export const {mockResultsFromData} = require('./custom/response/dataToLive')
+export { mockResultsFromData, mockResultsFromCapturedOutput } from './custom/response/dataToLive'
 
-export const {testQuerySet} = require('./custom/session/testQuerySet')
-export const {mockDriver} = require('./custom/driver/mockDriver')
+export { testQuerySet } from './custom/session/testQuerySet'
+export { mockDriver } from './custom/driver/mockDriver'
 
 // conversions
-export const {dataToLive} = require('./custom/response/dataToLive')
-export const {dataToStored} = require('./custom/response/dataToStored')
-export const {storedToLive} = require('./custom/response/storedToLive')
-export const {storedToData} = require('./custom/response/storedToData')
-export const {liveToStored} = require('./custom/response/liveToStored')
-export const {liveToData} = require('./custom/response/liveToData')
-export const {wrapCopiedResults} = require('./custom/response/wrapCopiedResults')
+export { dataToLive } from './custom/response/dataToLive'
+export { dataToStored } from './custom/response/dataToStored'
+export { storedToLive } from './custom/response/storedToLive'
+export { storedToData } from './custom/response/storedToData'
+export { liveToStored } from './custom/response/liveToStored'
+export { liveToData } from './custom/response/liveToData'
+export { wrapCopiedResults } from './custom/response/wrapCopiedResults'
 
 
 // utilities
-export const {getDatabaseInfo} = require('./custom/database/getDatabaseInfo')
+export { getDatabaseInfo } from './custom/database/getDatabaseInfo'
 
 /* ns__custom_end export */

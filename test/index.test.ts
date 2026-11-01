@@ -5,23 +5,24 @@ import test from 'ava';
 const indexFile = require( '../src/index' )
 import { mockDriver } from '../src/custom/driver/mockDriver';
 
-const mockSessionFromQuerySet = require('../src/custom/session/mockSessionFromQuerySet')
-const mockSessionFromFunction = require('../src/custom/session/mockSessionFromFunction')
-const {mockResultsFromData} = require('../src/custom/response/dataToLive')
-const {testQuerySet} = require('../src/custom/session/testQuerySet')
+import { mockSessionFromQuerySet } from '../src/custom/session/mockSessionFromQuerySet'
+import { mockSessionFromFunction } from '../src/custom/session/mockSessionFromFunction'
+import { mockGetSession } from '../src/custom/session/mockGetSession'
+import { mockResultsFromData, mockResultsFromCapturedOutput } from '../src/custom/response/dataToLive'
+import { testQuerySet } from '../src/custom/session/testQuerySet'
 
 // conversions
-const {dataToLive} = require('../src/custom/response/dataToLive')
-const {dataToStored} = require('../src/custom/response/dataToStored')
-const {storedToLive} = require('../src/custom/response/storedToLive')
-const {storedToData} = require('../src/custom/response/storedToData')
-const {liveToStored} = require('../src/custom/response/liveToStored')
-const {liveToData} = require('../src/custom/response/liveToData')
-const {wrapCopiedResults} = require('../src/custom/response/wrapCopiedResults')
+import { dataToLive } from '../src/custom/response/dataToLive'
+import { dataToStored } from '../src/custom/response/dataToStored'
+import { storedToLive } from '../src/custom/response/storedToLive'
+import { storedToData } from '../src/custom/response/storedToData'
+import { liveToStored } from '../src/custom/response/liveToStored'
+import { liveToData } from '../src/custom/response/liveToData'
+import { wrapCopiedResults } from '../src/custom/response/wrapCopiedResults'
 
 
 // utilities
-const {getDatabaseInfo} = require('../src/custom/database/getDatabaseInfo')
+import { getDatabaseInfo } from '../src/custom/database/getDatabaseInfo'
 
 /* ns__custom_end customImports */
 
@@ -31,66 +32,23 @@ const {getDatabaseInfo} = require('../src/custom/database/getDatabaseInfo')
 /* ns__custom_start general */
 
 test('conversion functions available', t => {
-  t.deepEqual(
-    liveToStored,
-    indexFile.liveToStored
-  )
-  t.deepEqual(
-    liveToData,
-    indexFile.liveToData
-  )
-  t.deepEqual(
-    dataToStored,
-    indexFile.dataToStored
-  )
-  t.deepEqual(
-    dataToLive,
-    indexFile.dataToLive
-  )
-  t.deepEqual(
-    storedToLive,
-    indexFile.storedToLive
-  )
-  t.deepEqual(
-    storedToData,
-    indexFile.storedToData
-  )
-  t.deepEqual(
-    wrapCopiedResults,
-    indexFile.wrapCopiedResults
-  )
-
+  t.is(liveToStored, indexFile.liveToStored)
+  t.is(liveToData, indexFile.liveToData)
+  t.is(dataToStored, indexFile.dataToStored)
+  t.is(dataToLive, indexFile.dataToLive)
+  t.is(storedToLive, indexFile.storedToLive)
+  t.is(storedToData, indexFile.storedToData)
+  t.is(wrapCopiedResults, indexFile.wrapCopiedResults)
 })
 
 test('general', t => {
-
-  t.deepEqual(
-      mockSessionFromQuerySet,
-      indexFile.mockSessionFromQuerySet
-  )
-  t.deepEqual(
-      mockSessionFromFunction,
-      indexFile.mockSessionFromFunction
-  )
-  t.deepEqual(
-      mockResultsFromData,
-      indexFile.mockResultsFromData
-  )
-
-  t.deepEqual(
-      testQuerySet,
-      indexFile.testQuerySet
-  )
-
-  t.deepEqual(
-    mockDriver,
-    indexFile.mockDriver
-  )
-
-  t.deepEqual(
-    getDatabaseInfo,
-    indexFile.getDatabaseInfo
-  )
-
-});
+  t.is(mockSessionFromQuerySet, indexFile.mockSessionFromQuerySet)
+  t.is(mockSessionFromFunction, indexFile.mockSessionFromFunction)
+  t.is(mockGetSession, indexFile.mockGetSession)
+  t.is(mockResultsFromData, indexFile.mockResultsFromData)
+  t.is(mockResultsFromCapturedOutput, indexFile.mockResultsFromCapturedOutput)
+  t.is(testQuerySet, indexFile.testQuerySet)
+  t.is(mockDriver, indexFile.mockDriver)
+  t.is(getDatabaseInfo, indexFile.getDatabaseInfo)
+})
 /* ns__custom_end general */

@@ -1,5 +1,6 @@
 # Replaces the old Travis CI setup: test on every push/PR, release from main with
-# semantic-release (needs an NPM_TOKEN repository secret with publish rights).
+# semantic-release. Publishing uses npm Trusted Publishing (OIDC): the package's npm
+# settings name this repo + workflow file as a trusted publisher, so no NPM_TOKEN exists.
 name: CI
 
 on:
@@ -47,9 +48,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # Trusted publishing needs npm >= 11.5.1; Node 22 ships an older npm.
+      - run: npm install -g npm@latest
       - run: npm ci
       - run: npm run build
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

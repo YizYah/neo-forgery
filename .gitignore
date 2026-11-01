@@ -14,3 +14,7 @@ yalc.lock
 .idea
 .env
 /* ns__custom_end extra */
+
+# HubLaunch working files
+.hublaunch/
+ralph.md
